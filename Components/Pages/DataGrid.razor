@@ -15,6 +15,7 @@
     </ActionButtons>
     <ChildContent>
 
+        @* ───── Stat Cards ───── *@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <BbCard>
                 <BbCardContent Class="pt-6">
@@ -70,12 +71,18 @@
             </BbCard>
         </div>
 
+        @* ───── 1. Full-Featured Orders Grid ───── *@
         <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>Orders</BbCardTitle>
+                <BbCardDescription>Full-featured grid: selection, expand, search, filter, resize, column visibility, and context menus.</BbCardDescription>
+            </BbCardHeader>
             <BbCardContent Class="px-4 py-0">
                 <BbDataGrid TData="OrderRow" Items="_orders"
                             SelectionMode="DataTableSelectionMode.Multiple"
                             @bind-SelectedItems="_selectedOrders"
                             Resizable="true"
+                            Reorderable="true"
                             ShowSearch="true"
                             SearchPlaceholder="Search orders..."
                             InitialPageSize="10"
@@ -87,7 +94,7 @@
                         <BbDataGridColumnVisibility TData="OrderRow" />
                     </Toolbar>
                     <Columns>
-                        <BbDataGridSelectColumn />
+                        <BbDataGridSelectColumn Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Left" />
                         <BbDataGridExpandColumn />
                         <BbDataGridPropertyColumn Property="@(o => o.Id)" Title="#" Width="80px"
                                                    Sortable="true" CellClass="tabular-nums font-mono text-xs" />
@@ -110,7 +117,7 @@
                                                    CellClass="tabular-nums font-medium" />
                         <BbDataGridPropertyColumn Property="@(o => o.Date)" Format="MMM d, yyyy" Sortable="true"
                                                    CellClass="tabular-nums text-sm text-muted-foreground" />
-                        <BbDataGridTemplateColumn Title="" Width="60px">
+                        <BbDataGridTemplateColumn Title="" Width="60px" Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Right">
                             <ChildContent Context="order">
                                 <BbDropdownMenu>
                                     <BbDropdownMenuTrigger>
@@ -169,6 +176,231 @@
                             </div>
                         </div>
                     </DetailTemplate>
+                    <RowContextMenu Context="menu">
+                        <BbContextMenu>
+                            <BbContextMenuContent>
+                                <BbContextMenuItem OnClick="@(() => menu.CopyToClipboardAsync(menu.FormatRow(menu.Item, "\t")))">
+                                    <LucideIcon Name="clipboard-copy" class="h-4 w-4 mr-2" />
+                                    Copy Row
+                                </BbContextMenuItem>
+                                @if (menu.SelectedItems.Count > 1)
+                                {
+                                    <BbContextMenuItem OnClick="@(() => menu.CopyToClipboardAsync(menu.FormatRows(menu.SelectedItems, "\t")))">
+                                        <LucideIcon Name="clipboard-list" class="h-4 w-4 mr-2" />
+                                        Copy Selected (@menu.SelectedItems.Count rows)
+                                    </BbContextMenuItem>
+                                }
+                                <BbContextMenuSeparator />
+                                <BbContextMenuItem>
+                                    <LucideIcon Name="eye" class="h-4 w-4 mr-2" />
+                                    View Details
+                                </BbContextMenuItem>
+                                <BbContextMenuItem>
+                                    <LucideIcon Name="pencil" class="h-4 w-4 mr-2" />
+                                    Edit Order
+                                </BbContextMenuItem>
+                                <BbContextMenuSeparator />
+                                <BbContextMenuItem Class="text-destructive">
+                                    <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                                    Delete
+                                </BbContextMenuItem>
+                            </BbContextMenuContent>
+                        </BbContextMenu>
+                    </RowContextMenu>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───── 2. Grouped Grid with Aggregates ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>Grouped by Category</BbCardTitle>
+                <BbCardDescription>Row grouping with sum and average aggregates per group.</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="OrderRow" Items="_orders"
+                            GroupBy="@(o => (object)o.Category)"
+                            InitialPageSize="20"
+                            ShowPagination="false">
+                    <Columns>
+                        <BbDataGridGroupColumn TData="OrderRow" TProperty="string"
+                                                Property="@(o => o.Category)"
+                                                Title="Category"
+                                                GroupSortDirection="SortDirection.Ascending" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Customer)" Sortable="true" />
+                        <BbDataGridTemplateColumn Title="Status">
+                            <ChildContent Context="order">
+                                <BbBadge Variant="@GetStatusVariant(order.Status)">@order.Status</BbBadge>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(o => o.Items)" Title="Qty" Sortable="true"
+                                                   CellClass="tabular-nums"
+                                                   Aggregate="BlazorBlueprint.Primitives.DataGrid.AggregateFunction.Sum" AggregateFormat="N0" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Total)" Format="C2" Sortable="true"
+                                                   CellClass="tabular-nums font-medium"
+                                                   Aggregate="BlazorBlueprint.Primitives.DataGrid.AggregateFunction.Sum" AggregateFormat="C2" />
+                    </Columns>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───── 3. Per-Column Filtering ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>Per-Column Filters</BbCardTitle>
+                <BbCardDescription>Click the filter icon on column headers to apply per-column filters with operators.</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="OrderRow" Items="_orders"
+                            ShowFilterBar="true"
+                            InitialPageSize="5"
+                            ShowPagination="true">
+                    <Columns>
+                        <BbDataGridPropertyColumn Property="@(o => o.Id)" Title="#" Width="80px"
+                                                   Sortable="true" Filterable="true"
+                                                   CellClass="tabular-nums font-mono text-xs" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Customer)" Sortable="true" Filterable="true" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Category)" Sortable="true" Filterable="true" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Total)" Format="C2" Sortable="true" Filterable="true"
+                                                   CellClass="tabular-nums font-medium" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Date)" Format="MMM d, yyyy" Sortable="true" Filterable="true"
+                                                   CellClass="tabular-nums text-sm text-muted-foreground" />
+                    </Columns>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───── 4. Hierarchical Tree Data ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>File Explorer</BbCardTitle>
+                <BbCardDescription>Hierarchical tree data with nested children, expand/collapse, and cascade selection.</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="FileNode" Items="_fileTree"
+                            ChildrenSelector="@(f => f.Children)"
+                            ItemValueSelector="@(f => f.Id)"
+                            DefaultExpandDepth="1"
+                            SelectionMode="DataTableSelectionMode.Multiple"
+                            HierarchySelectionMode="HierarchySelectionMode.Cascade"
+                            ShowExpandAll="true"
+                            ShowPagination="false">
+                    <Columns>
+                        <BbDataGridSelectColumn Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Left" />
+                        <BbDataGridHierarchyColumn TData="FileNode" TProp="string"
+                                                    Property="@(f => f.Name)" Title="Name" Sortable="true" />
+                        <BbDataGridTemplateColumn Title="Type" Width="100px">
+                            <ChildContent Context="file">
+                                <BbBadge Variant="@(file.IsFolder ? BadgeVariant.Secondary : BadgeVariant.Outline)" Class="text-xs">
+                                    @(file.IsFolder ? "Folder" : file.Extension)
+                                </BbBadge>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(f => f.Size)" Title="Size" Sortable="true"
+                                                   CellClass="tabular-nums text-sm text-muted-foreground">
+                            <CellTemplate Context="file">
+                                <span class="text-sm text-muted-foreground tabular-nums">
+                                    @(file.IsFolder ? "--" : FormatSize(file.Size))
+                                </span>
+                            </CellTemplate>
+                        </BbDataGridPropertyColumn>
+                        <BbDataGridPropertyColumn Property="@(f => f.Modified)" Format="MMM d, yyyy" Sortable="true"
+                                                   CellClass="tabular-nums text-sm text-muted-foreground" />
+                    </Columns>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───── 5. Virtualized Large Dataset ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>Virtualized Grid (1,000 rows)</BbCardTitle>
+                <BbCardDescription>Row virtualization for smooth scrolling over large datasets with sticky header.</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0 pb-4">
+                <BbDataGrid TData="LogEntry" ItemsProvider="LoadLogEntries"
+                            Virtualize="true"
+                            ItemSize="40"
+                            VirtualScrollHeight="400px"
+                            StickyHeader="true"
+                            Striped="true"
+                            ShowPagination="false"
+                            ShowSearch="true"
+                            SearchPlaceholder="Search logs...">
+                    <Columns>
+                        <BbDataGridPropertyColumn Property="@(l => l.Id)" Title="#" Width="70px"
+                                                   Sortable="true" CellClass="tabular-nums font-mono text-xs" />
+                        <BbDataGridPropertyColumn Property="@(l => l.Timestamp)" Format="yyyy-MM-dd HH:mm:ss" Width="180px"
+                                                   Sortable="true" CellClass="tabular-nums text-sm" />
+                        <BbDataGridTemplateColumn Title="Level" Width="110px" Sortable="true">
+                            <ChildContent Context="log">
+                                <BbBadge Variant="@GetLogLevelVariant(log.Level)" Class="text-xs">@log.Level</BbBadge>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(l => l.Source)" Sortable="true" Filterable="true" Width="160px" />
+                        <BbDataGridPropertyColumn Property="@(l => l.Message)" Filterable="true"
+                                                   CellClass="text-sm truncate" />
+                    </Columns>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───── 6. Single Selection with Row Click ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <BbCardTitle>Team Members</BbCardTitle>
+                        <BbCardDescription>Single selection mode — click a row to select. Striped rows for readability.</BbCardDescription>
+                    </div>
+                    @if (_selectedMember != null)
+                    {
+                        <BbBadge Variant="BadgeVariant.Secondary">
+                            Selected: @_selectedMember.Name
+                        </BbBadge>
+                    }
+                </div>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="TeamMember" Items="_teamMembers"
+                            SelectionMode="DataTableSelectionMode.Single"
+                            SelectedItemsChanged="OnMemberSelected"
+                            Striped="true"
+                            InitialPageSize="5"
+                            ShowPagination="true">
+                    <Columns>
+                        <BbDataGridTemplateColumn Title="Member" Sortable="true">
+                            <ChildContent Context="member">
+                                <div class="flex items-center gap-3">
+                                    <BbAvatar Class="h-8 w-8">
+                                        <BbAvatarFallback Class="text-xs">@member.Initials</BbAvatarFallback>
+                                    </BbAvatar>
+                                    <div>
+                                        <p class="text-sm font-medium">@member.Name</p>
+                                        <p class="text-xs text-muted-foreground">@member.Email</p>
+                                    </div>
+                                </div>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(m => m.Department)" Sortable="true" Filterable="true" />
+                        <BbDataGridTemplateColumn Title="Role" Width="140px">
+                            <ChildContent Context="member">
+                                <BbBadge Variant="@(member.Role == "Lead" ? BadgeVariant.Default : BadgeVariant.Outline)">
+                                    @member.Role
+                                </BbBadge>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridTemplateColumn Title="Status" Width="120px">
+                            <ChildContent Context="member">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="h-2 w-2 rounded-full @(member.Online ? "bg-green-500" : "bg-muted-foreground/40")"></div>
+                                    <span class="text-sm">@(member.Online ? "Online" : "Offline")</span>
+                                </div>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(m => m.JoinDate)" Format="MMM yyyy" Sortable="true"
+                                                   Title="Joined" CellClass="tabular-nums text-sm text-muted-foreground" />
+                    </Columns>
                 </BbDataGrid>
             </BbCardContent>
         </BbCard>
@@ -177,14 +409,30 @@
 </PageWrapper>
 
 @code {
+    // ───── Orders Grid State ─────
     private IReadOnlyCollection<OrderRow> _selectedOrders = Array.Empty<OrderRow>();
     private List<OrderRow> _orders = null!;
 
-    protected override void OnInitialized() => _orders = new(_seedOrders);
+    // ───── Team Members State ─────
+    private TeamMember? _selectedMember;
+
+    // ───── Virtualized Log State ─────
+    private List<LogEntry> _logEntries = null!;
+
+    // ───── File Tree State ─────
+    private List<FileNode> _fileTree = null!;
+
+    protected override void OnInitialized()
+    {
+        _orders = new(_seedOrders);
+        _logEntries = GenerateLogEntries(1000);
+        _fileTree = GenerateFileTree();
+    }
 
     private void ResetState()
     {
         _selectedOrders = Array.Empty<OrderRow>();
+        _selectedMember = null;
         _orders = new(_seedOrders);
     }
 
@@ -197,20 +445,46 @@
         var name = names[Random.Shared.Next(names.Length)];
         _orders = new(_orders)
         {
-            new OrderRow(
-                id,
-                name,
-                $"{name.Split(' ')[0].ToLower()}@example.com",
+            new OrderRow(id, name, $"{name.Split(' ')[0].ToLower()}@example.com",
                 statuses[Random.Shared.Next(statuses.Length)],
                 categories[Random.Shared.Next(categories.Length)],
                 Random.Shared.Next(1, 10),
                 Math.Round((decimal)(Random.Shared.NextDouble() * 500 + 20), 2),
-                DateTime.Today.AddDays(-Random.Shared.Next(0, 30)),
-                "New order"
-            )
+                DateTime.Today.AddDays(-Random.Shared.Next(0, 30)), "New order")
         };
     }
 
+    private ValueTask<BlazorBlueprint.Primitives.DataGrid.DataGridResult<LogEntry>> LoadLogEntries(
+        BlazorBlueprint.Primitives.DataGrid.DataGridRequest request)
+    {
+        var filtered = _logEntries.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+        {
+            var search = request.SearchText.ToLowerInvariant();
+            filtered = filtered.Where(l =>
+                l.Message.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                l.Source.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                l.Level.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var list = filtered.ToList();
+        var count = request.Count ?? 50;
+        var items = list.Skip(request.StartIndex).Take(count).ToList();
+
+        return ValueTask.FromResult(new BlazorBlueprint.Primitives.DataGrid.DataGridResult<LogEntry>
+        {
+            Items = items,
+            TotalItemCount = list.Count
+        });
+    }
+
+    private void OnMemberSelected(IReadOnlyCollection<TeamMember> selected)
+    {
+        _selectedMember = selected.FirstOrDefault();
+    }
+
+    // ───── Helpers ─────
     private static BadgeVariant GetStatusVariant(string status) => status switch
     {
         "Fulfilled" => BadgeVariant.Default,
@@ -220,8 +494,83 @@
         _ => BadgeVariant.Outline
     };
 
-    private record OrderRow(int Id, string Customer, string Email, string Status, string Category, int Items, decimal Total, DateTime Date, string Notes);
+    private static BadgeVariant GetLogLevelVariant(string level) => level switch
+    {
+        "Error" => BadgeVariant.Destructive,
+        "Warning" => BadgeVariant.Secondary,
+        "Info" => BadgeVariant.Outline,
+        "Debug" => BadgeVariant.Outline,
+        _ => BadgeVariant.Outline
+    };
 
+    private static string FormatSize(long bytes) => bytes switch
+    {
+        < 1024 => $"{bytes} B",
+        < 1024 * 1024 => $"{bytes / 1024.0:F1} KB",
+        _ => $"{bytes / (1024.0 * 1024.0):F1} MB"
+    };
+
+    // ───── Data Models ─────
+    private class OrderRow
+    {
+        public int Id { get; set; }
+        public string Customer { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string Category { get; set; } = "";
+        public int Items { get; set; }
+        public decimal Total { get; set; }
+        public DateTime Date { get; set; }
+        public string Notes { get; set; } = "";
+
+        public OrderRow(int id, string customer, string email, string status, string category, int items, decimal total, DateTime date, string notes)
+        {
+            Id = id; Customer = customer; Email = email; Status = status; Category = category; Items = items; Total = total; Date = date; Notes = notes;
+        }
+    }
+
+    private class FileNode
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public long Size { get; set; }
+        public DateTime Modified { get; set; }
+        public bool IsFolder { get; set; }
+        public string Extension { get; set; } = "";
+        public List<FileNode>? Children { get; set; }
+    }
+
+    private class LogEntry
+    {
+        public int Id { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Level { get; set; } = "";
+        public string Source { get; set; } = "";
+        public string Message { get; set; } = "";
+
+        public LogEntry(int id, DateTime timestamp, string level, string source, string message)
+        {
+            Id = id; Timestamp = timestamp; Level = level; Source = source; Message = message;
+        }
+    }
+
+    private class TeamMember
+    {
+        public string Name { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Department { get; set; } = "";
+        public string Role { get; set; } = "";
+        public bool Online { get; set; }
+        public DateTime JoinDate { get; set; }
+        public string Initials => string.Concat(Name.Split(' ').Select(w => w[0]));
+
+        public TeamMember(string name, string email, string department, string role, bool online, DateTime joinDate)
+        {
+            Name = name; Email = email; Department = department; Role = role; Online = online; JoinDate = joinDate;
+        }
+    }
+
+    // ───── Seed Data ─────
     private static readonly List<OrderRow> _seedOrders = new()
     {
         new(1001, "Alice Chen", "alice@example.com", "Fulfilled", "Electronics", 3, 299.99m, new DateTime(2025, 3, 1), "Express shipping requested"),
@@ -239,5 +588,116 @@
         new(1013, "Mia Johnson", "mia@example.com", "Fulfilled", "Electronics", 1, 1299.99m, new DateTime(2025, 3, 15), "Premium warranty"),
         new(1014, "Nathan Park", "nathan@example.com", "Processing", "Books", 7, 98.00m, new DateTime(2025, 3, 16), "Classroom order"),
         new(1015, "Olivia Davis", "olivia@example.com", "Cancelled", "Food", 3, 55.50m, new DateTime(2025, 3, 17), "Allergy concern"),
+    };
+
+    private static readonly List<TeamMember> _teamMembers = new()
+    {
+        new("Sarah Connor", "sarah@example.com", "Engineering", "Lead", true, new DateTime(2022, 1, 15)),
+        new("James Kirk", "james@example.com", "Engineering", "Senior", true, new DateTime(2022, 6, 1)),
+        new("Dana Scully", "dana@example.com", "Engineering", "Mid", false, new DateTime(2023, 3, 10)),
+        new("Peter Parker", "peter@example.com", "Design", "Lead", true, new DateTime(2021, 11, 20)),
+        new("Diana Prince", "diana@example.com", "Design", "Senior", true, new DateTime(2023, 1, 5)),
+        new("Bruce Wayne", "bruce@example.com", "Product", "Lead", false, new DateTime(2020, 8, 12)),
+        new("Clark Kent", "clark@example.com", "Product", "Mid", true, new DateTime(2024, 2, 28)),
+        new("Natasha Romanov", "natasha@example.com", "Engineering", "Senior", true, new DateTime(2023, 7, 14)),
+        new("Tony Stark", "tony@example.com", "Engineering", "Senior", false, new DateTime(2021, 4, 1)),
+        new("Wanda Maximoff", "wanda@example.com", "Design", "Mid", true, new DateTime(2024, 5, 20)),
+    };
+
+    // ───── Data Generators ─────
+    private static List<LogEntry> GenerateLogEntries(int count)
+    {
+        var levels = new[] { "Info", "Info", "Info", "Warning", "Warning", "Error", "Debug", "Debug" };
+        var sources = new[] { "API", "Auth", "Database", "Scheduler", "Cache", "Queue", "Storage" };
+        var messages = new[]
+        {
+            "Request processed successfully",
+            "Connection pool exhausted, waiting for available connection",
+            "Failed to authenticate user, invalid token",
+            "Database query took longer than threshold (2000ms)",
+            "Cache miss for key: user_session_*",
+            "Scheduled job completed: cleanup_expired_sessions",
+            "Rate limit exceeded for IP range",
+            "File upload completed, size: {0} bytes",
+            "WebSocket connection established from client",
+            "Retry attempt {0}/3 for external service call",
+            "Memory usage above 80% threshold",
+            "Configuration reloaded successfully",
+            "Background worker started processing batch",
+            "SSL certificate renewal check passed",
+            "Health check endpoint responded OK",
+        };
+
+        var baseTime = new DateTime(2025, 3, 15, 8, 0, 0);
+        return Enumerable.Range(1, count).Select(i => new LogEntry(
+            i,
+            baseTime.AddSeconds(i * 3.7),
+            levels[Random.Shared.Next(levels.Length)],
+            sources[Random.Shared.Next(sources.Length)],
+            string.Format(messages[Random.Shared.Next(messages.Length)], Random.Shared.Next(100, 99999))
+        )).ToList();
+    }
+
+    private static List<FileNode> GenerateFileTree() => new()
+    {
+        new FileNode
+        {
+            Id = "src", Name = "src", IsFolder = true, Modified = DateTime.Today,
+            Children = new()
+            {
+                new FileNode
+                {
+                    Id = "src/components", Name = "Components", IsFolder = true, Modified = DateTime.Today.AddDays(-1),
+                    Children = new()
+                    {
+                        new() { Id = "src/c/btn", Name = "Button.razor", Size = 3200, Extension = ".razor", Modified = DateTime.Today.AddDays(-2) },
+                        new() { Id = "src/c/card", Name = "Card.razor", Size = 2100, Extension = ".razor", Modified = DateTime.Today.AddDays(-3) },
+                        new() { Id = "src/c/modal", Name = "Modal.razor", Size = 5400, Extension = ".razor", Modified = DateTime.Today.AddDays(-1) },
+                        new() { Id = "src/c/table", Name = "DataGrid.razor", Size = 12800, Extension = ".razor", Modified = DateTime.Today },
+                    }
+                },
+                new FileNode
+                {
+                    Id = "src/pages", Name = "Pages", IsFolder = true, Modified = DateTime.Today.AddDays(-2),
+                    Children = new()
+                    {
+                        new() { Id = "src/p/home", Name = "Home.razor", Size = 4500, Extension = ".razor", Modified = DateTime.Today.AddDays(-5) },
+                        new() { Id = "src/p/dash", Name = "Dashboard.razor", Size = 8900, Extension = ".razor", Modified = DateTime.Today.AddDays(-1) },
+                        new() { Id = "src/p/settings", Name = "Settings.razor", Size = 6700, Extension = ".razor", Modified = DateTime.Today.AddDays(-4) },
+                    }
+                },
+                new FileNode
+                {
+                    Id = "src/services", Name = "Services", IsFolder = true, Modified = DateTime.Today.AddDays(-3),
+                    Children = new()
+                    {
+                        new() { Id = "src/s/auth", Name = "AuthService.cs", Size = 7200, Extension = ".cs", Modified = DateTime.Today.AddDays(-6) },
+                        new() { Id = "src/s/api", Name = "ApiClient.cs", Size = 9100, Extension = ".cs", Modified = DateTime.Today.AddDays(-2) },
+                    }
+                },
+                new() { Id = "src/program", Name = "Program.cs", Size = 1800, Extension = ".cs", Modified = DateTime.Today.AddDays(-7) },
+                new() { Id = "src/imports", Name = "_Imports.razor", Size = 420, Extension = ".razor", Modified = DateTime.Today.AddDays(-10) },
+            }
+        },
+        new FileNode
+        {
+            Id = "wwwroot", Name = "wwwroot", IsFolder = true, Modified = DateTime.Today.AddDays(-1),
+            Children = new()
+            {
+                new FileNode
+                {
+                    Id = "ww/css", Name = "css", IsFolder = true, Modified = DateTime.Today.AddDays(-2),
+                    Children = new()
+                    {
+                        new() { Id = "ww/css/app", Name = "app.css", Size = 45000, Extension = ".css", Modified = DateTime.Today.AddDays(-1) },
+                        new() { Id = "ww/css/theme", Name = "theme.css", Size = 2300, Extension = ".css", Modified = DateTime.Today.AddDays(-5) },
+                    }
+                },
+                new() { Id = "ww/favicon", Name = "favicon.ico", Size = 15086, Extension = ".ico", Modified = DateTime.Today.AddDays(-30) },
+            }
+        },
+        new() { Id = "readme", Name = "README.md", Size = 3400, Extension = ".md", Modified = DateTime.Today.AddDays(-2) },
+        new() { Id = "gitignore", Name = ".gitignore", Size = 280, Extension = "", Modified = DateTime.Today.AddDays(-60) },
+        new() { Id = "csproj", Name = "Project.csproj", Size = 1100, Extension = ".csproj", Modified = DateTime.Today.AddDays(-8) },
     };
 }
