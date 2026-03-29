@@ -23,6 +23,9 @@ A production-ready Blazor Server application template with a polished collapsibl
 <p align="center">
   <img src="screenshots/screenshot-4.png" alt="Components" width="800" />
 </p>
+<p align="center">
+  <img src="screenshots/screenshot-5.png" alt="Components" width="800" />
+</p>
 
 ---
 
