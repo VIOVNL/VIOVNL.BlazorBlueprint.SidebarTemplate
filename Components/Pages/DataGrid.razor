@@ -650,7 +650,7 @@
         ["gridClass"] = "rounded-none on grid root",
         ["tableContainer"] = "Dashed border on scroll container",
         ["striped"] = "Alternating row backgrounds",
-        ["stripeClass"] = "Custom bg-muted/30 stripe color",
+        ["stripeClass"] = "Custom even:bg-muted/50 stripe color",
         ["rowClass"] = "Red/amber bg for high CPU rows",
         ["headerClass"] = "Primary-tinted bold headers",
         ["cellClass"] = "font-semibold, font-mono per column",
@@ -693,7 +693,7 @@
 
         public string? GridClass => On("gridClass") ? "rounded-none" : null;
         public string? TableContainerClass => On("tableContainer") ? "border border-dashed border-primary/20 rounded-lg" : null;
-        public string? StripeClass => On("stripeClass") ? "bg-muted/30" : null;
+        public string? StripeClass => On("stripeClass") ? "even:bg-muted/50" : null;
         public Func<ServerMetric, string?>? RowClassFunc => On("rowClass")
             ? m => m.CpuUsage > 90 ? "!bg-destructive/10 hover:!bg-destructive/15" : m.CpuUsage > 70 ? "!bg-amber-500/10 hover:!bg-amber-500/15" : null
             : null;
