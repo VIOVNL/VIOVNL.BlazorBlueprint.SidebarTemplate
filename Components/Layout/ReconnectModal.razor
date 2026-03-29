@@ -1,5 +1,107 @@
 <script type="module" src="@Assets["Components/Layout/ReconnectModal.razor.js"]"></script>
 
+<style>
+    /* Hide all state-driven elements by default */
+    .components-reconnect-first-attempt-visible,
+    .components-reconnect-repeated-attempt-visible,
+    .components-reconnect-failed-visible,
+    .components-pause-visible,
+    .components-resume-failed-visible,
+    .components-rejoining-animation {
+        display: none !important;
+    }
+
+    /* Show elements based on current reconnect state */
+    #components-reconnect-modal.components-reconnect-show .components-reconnect-first-attempt-visible,
+    #components-reconnect-modal.components-reconnect-show .components-rejoining-animation,
+    #components-reconnect-modal.components-reconnect-paused .components-pause-visible,
+    #components-reconnect-modal.components-reconnect-resume-failed .components-resume-failed-visible {
+        display: block !important;
+    }
+
+    #components-reconnect-modal.components-reconnect-retrying {
+        display: block !important;
+    }
+    #components-reconnect-modal.components-reconnect-retrying .components-reconnect-repeated-attempt-visible,
+    #components-reconnect-modal.components-reconnect-retrying .components-rejoining-animation {
+        display: block !important;
+    }
+
+    #components-reconnect-modal.components-reconnect-failed {
+        display: block !important;
+    }
+    #components-reconnect-modal.components-reconnect-failed .components-reconnect-failed-visible {
+        display: block !important;
+    }
+
+    /* Show Resume button as inline-flex to match Tailwind styling */
+    #components-reconnect-modal.components-reconnect-paused .components-pause-visible.reconnect-btn,
+    #components-reconnect-modal.components-reconnect-resume-failed .components-resume-failed-visible.reconnect-btn,
+    #components-reconnect-modal.components-reconnect-failed .components-reconnect-failed-visible.reconnect-btn {
+        display: inline-flex !important;
+    }
+
+    /* Dialog open/close animations */
+    #components-reconnect-modal {
+        opacity: 0;
+        transition: display 0.5s allow-discrete, overlay 0.5s allow-discrete;
+        animation: reconnect-fadeOut 0.5s both;
+    }
+
+    #components-reconnect-modal[open] {
+        animation: reconnect-slideUp 1.5s cubic-bezier(.05, .89, .25, 1.02) 0.3s,
+                   reconnect-fadeIn 0.5s ease-in-out 0.3s;
+        animation-fill-mode: both;
+    }
+
+    #components-reconnect-modal::backdrop {
+        background-color: rgba(0, 0, 0, 0.4);
+        animation: reconnect-fadeIn 0.5s ease-in-out;
+        opacity: 1;
+    }
+
+    @@keyframes reconnect-slideUp {
+        from { transform: translateY(30px) scale(0.95); }
+        to   { transform: translateY(0); }
+    }
+
+    @@keyframes reconnect-fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    @@keyframes reconnect-fadeOut {
+        from { opacity: 1; }
+        to   { opacity: 0; }
+    }
+
+    /* Ripple animation */
+    .components-rejoining-animation {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .components-rejoining-animation div {
+        position: absolute;
+        border: 3px solid var(--primary);
+        opacity: 1;
+        border-radius: 50%;
+        animation: reconnect-ripple 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+    .components-rejoining-animation div:nth-child(2) {
+        animation-delay: -0.5s;
+    }
+
+    @@keyframes reconnect-ripple {
+        0%    { top: 40px; left: 40px; width: 0;    height: 0;    opacity: 0; }
+        4.9%  { top: 40px; left: 40px; width: 0;    height: 0;    opacity: 0; }
+        5%    { top: 40px; left: 40px; width: 0;    height: 0;    opacity: 1; }
+        100%  { top: 0;    left: 0;    width: 80px; height: 80px; opacity: 0; }
+    }
+</style>
+
 <dialog id="components-reconnect-modal" class="w-80 mx-auto mt-[20vh] p-0 border border-border rounded-lg bg-card text-card-foreground shadow-lg" data-nosnippet>
     <div class="flex flex-col items-center gap-4 p-6">
         <div class="components-rejoining-animation" aria-hidden="true">
@@ -15,7 +117,7 @@
         <p class="components-reconnect-failed-visible text-sm text-center text-destructive">
             Failed to rejoin.<br />Please retry or reload the page.
         </p>
-        <button id="components-reconnect-button" class="components-reconnect-failed-visible inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+        <button id="components-reconnect-button" class="components-reconnect-failed-visible reconnect-btn inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
             Retry
         </button>
         <p class="components-pause-visible text-sm text-center text-muted-foreground">
@@ -24,7 +126,7 @@
         <p class="components-resume-failed-visible text-sm text-center text-destructive">
             Failed to resume the session.<br />Please retry or reload the page.
         </p>
-        <button id="components-resume-button" class="components-pause-visible components-resume-failed-visible inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+        <button id="components-resume-button" class="components-pause-visible components-resume-failed-visible reconnect-btn inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
             Resume
         </button>
     </div>
