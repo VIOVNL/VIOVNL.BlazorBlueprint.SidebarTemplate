@@ -8,7 +8,21 @@ retryButton.addEventListener("click", retry);
 const resumeButton = document.getElementById("components-resume-button");
 resumeButton.addEventListener("click", resume);
 
+const stateClasses = [
+    "components-reconnect-show",
+    "components-reconnect-retrying",
+    "components-reconnect-failed",
+    "components-reconnect-paused",
+    "components-reconnect-resume-failed",
+];
+
+function clearStateClasses() {
+    reconnectModal.classList.remove(...stateClasses);
+}
+
 function handleReconnectStateChanged(event) {
+    clearStateClasses();
+
     if (event.detail.state === "show") {
         reconnectModal.showModal();
     } else if (event.detail.state === "hide") {
