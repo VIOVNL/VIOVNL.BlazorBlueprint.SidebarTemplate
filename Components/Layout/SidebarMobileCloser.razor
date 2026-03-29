@@ -1,0 +1,26 @@
+@inject NavigationManager Navigation
+@implements IDisposable
+
+@code {
+    [CascadingParameter]
+    private SidebarContext? SidebarContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        if (SidebarContext is { IsMobile: true })
+        {
+            SidebarContext.SetOpenMobile(false);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}
