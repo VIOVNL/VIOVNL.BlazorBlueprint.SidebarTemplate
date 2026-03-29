@@ -70,104 +70,108 @@
             </BbCard>
         </div>
 
-        <BbDataGrid TData="OrderRow" Items="_orders"
-                        SelectionMode="DataTableSelectionMode.Multiple"
-                        @bind-SelectedItems="_selectedOrders"
-                        Resizable="true"
-                        ShowSearch="true"
-                        SearchPlaceholder="Search orders..."
-                        InitialPageSize="10"
-                        ShowPagination="true"
-                        ItemKey="@(o => o.Id)"
-                        OnRowExpand="@(o => { })"
-                        RowClass="@(o => o.Status == "Cancelled" ? "opacity-50" : null)">
-                <Toolbar>
-                    <BbDataGridColumnVisibility TData="OrderRow" />
-                </Toolbar>
-                <Columns>
-                    <BbDataGridSelectColumn  />
-                    <BbDataGridExpandColumn  />
-                    <BbDataGridPropertyColumn Property="@(o => o.Id)" Title="#" Width="80px"
-                                               Sortable="true" CellClass="tabular-nums font-mono text-xs" />
-                    <BbDataGridPropertyColumn Property="@(o => o.Customer)" Sortable="true" Filterable="true" />
-                    <BbDataGridPropertyColumn Property="@(o => o.Email)" Sortable="true" Filterable="true"
-                                               CellClass="text-muted-foreground text-sm" />
-                    <BbDataGridTemplateColumn Title="Status" Sortable="true">
-                        <ChildContent Context="order">
-                            <BbBadge Variant="@GetStatusVariant(order.Status)">@order.Status</BbBadge>
-                        </ChildContent>
-                    </BbDataGridTemplateColumn>
-                    <BbDataGridPropertyColumn Property="@(o => o.Category)" Sortable="true" Filterable="true">
-                        <CellTemplate Context="order">
-                            <BbBadge Variant="BadgeVariant.Outline">@order.Category</BbBadge>
-                        </CellTemplate>
-                    </BbDataGridPropertyColumn>
-                    <BbDataGridPropertyColumn Property="@(o => o.Items)" Title="Qty" Sortable="true"
-                                               CellClass="tabular-nums" Width="80px" />
-                    <BbDataGridPropertyColumn Property="@(o => o.Total)" Format="C2" Sortable="true"
-                                               CellClass="tabular-nums font-medium" />
-                    <BbDataGridPropertyColumn Property="@(o => o.Date)" Format="MMM d, yyyy" Sortable="true"
-                                               CellClass="tabular-nums text-sm text-muted-foreground" />
-                    <BbDataGridTemplateColumn Title="" Width="60px">
-                        <ChildContent Context="order">
-                            <BbDropdownMenu>
-                                <BbDropdownMenuTrigger>
-                                    <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Icon" Class="h-8 w-8">
-                                        <LucideIcon Name="ellipsis" class="h-4 w-4" />
-                                    </BbButton>
-                                </BbDropdownMenuTrigger>
-                                <BbDropdownMenuContent Align="PopoverAlign.End">
-                                    <BbDropdownMenuLabel>Actions</BbDropdownMenuLabel>
-                                    <BbDropdownMenuSeparator />
-                                    <BbDropdownMenuItem>
-                                        <LucideIcon Name="eye" class="h-4 w-4 mr-2" />
-                                        View Details
-                                    </BbDropdownMenuItem>
-                                    <BbDropdownMenuItem>
-                                        <LucideIcon Name="pencil" class="h-4 w-4 mr-2" />
-                                        Edit
-                                    </BbDropdownMenuItem>
-                                    <BbDropdownMenuItem>
-                                        <LucideIcon Name="copy" class="h-4 w-4 mr-2" />
-                                        Duplicate
-                                    </BbDropdownMenuItem>
-                                    <BbDropdownMenuSeparator />
-                                    <BbDropdownMenuItem Class="text-destructive">
-                                        <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
-                                        Delete
-                                    </BbDropdownMenuItem>
-                                </BbDropdownMenuContent>
-                            </BbDropdownMenu>
-                        </ChildContent>
-                    </BbDataGridTemplateColumn>
-                </Columns>
-                <DetailTemplate Context="order">
-                    <div class="p-4 space-y-3">
-                        <div class="flex items-center gap-2">
-                            <h4 class="font-semibold text-sm">Order #@order.Id</h4>
-                            <BbBadge Variant="@GetStatusVariant(order.Status)" Class="text-xs">@order.Status</BbBadge>
+        <BbCard>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="OrderRow" Items="_orders"
+                            SelectionMode="DataTableSelectionMode.Multiple"
+                            @bind-SelectedItems="_selectedOrders"
+                            Resizable="true"
+                            ShowSearch="true"
+                            SearchPlaceholder="Search orders..."
+                            InitialPageSize="10"
+                            ShowPagination="true"
+                            ItemKey="@(o => o.Id)"
+                            OnRowExpand="@(o => { })"
+                            RowClass="@(o => o.Status == "Cancelled" ? "opacity-50" : null)">
+                    <Toolbar>
+                        <BbDataGridColumnVisibility TData="OrderRow" />
+                    </Toolbar>
+                    <Columns>
+                        <BbDataGridSelectColumn />
+                        <BbDataGridExpandColumn />
+                        <BbDataGridPropertyColumn Property="@(o => o.Id)" Title="#" Width="80px"
+                                                   Sortable="true" CellClass="tabular-nums font-mono text-xs" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Customer)" Sortable="true" Filterable="true" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Email)" Sortable="true" Filterable="true"
+                                                   CellClass="text-muted-foreground text-sm" />
+                        <BbDataGridTemplateColumn Title="Status" Sortable="true">
+                            <ChildContent Context="order">
+                                <BbBadge Variant="@GetStatusVariant(order.Status)">@order.Status</BbBadge>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(o => o.Category)" Sortable="true" Filterable="true">
+                            <CellTemplate Context="order">
+                                <BbBadge Variant="BadgeVariant.Outline">@order.Category</BbBadge>
+                            </CellTemplate>
+                        </BbDataGridPropertyColumn>
+                        <BbDataGridPropertyColumn Property="@(o => o.Items)" Title="Qty" Sortable="true"
+                                                   CellClass="tabular-nums" Width="80px" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Total)" Format="C2" Sortable="true"
+                                                   CellClass="tabular-nums font-medium" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Date)" Format="MMM d, yyyy" Sortable="true"
+                                                   CellClass="tabular-nums text-sm text-muted-foreground" />
+                        <BbDataGridTemplateColumn Title="" Width="60px">
+                            <ChildContent Context="order">
+                                <BbDropdownMenu>
+                                    <BbDropdownMenuTrigger>
+                                        <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Icon" Class="h-8 w-8">
+                                            <LucideIcon Name="ellipsis" class="h-4 w-4" />
+                                        </BbButton>
+                                    </BbDropdownMenuTrigger>
+                                    <BbDropdownMenuContent Align="PopoverAlign.End">
+                                        <BbDropdownMenuLabel>Actions</BbDropdownMenuLabel>
+                                        <BbDropdownMenuSeparator />
+                                        <BbDropdownMenuItem>
+                                            <LucideIcon Name="eye" class="h-4 w-4 mr-2" />
+                                            View Details
+                                        </BbDropdownMenuItem>
+                                        <BbDropdownMenuItem>
+                                            <LucideIcon Name="pencil" class="h-4 w-4 mr-2" />
+                                            Edit
+                                        </BbDropdownMenuItem>
+                                        <BbDropdownMenuItem>
+                                            <LucideIcon Name="copy" class="h-4 w-4 mr-2" />
+                                            Duplicate
+                                        </BbDropdownMenuItem>
+                                        <BbDropdownMenuSeparator />
+                                        <BbDropdownMenuItem Class="text-destructive">
+                                            <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                                            Delete
+                                        </BbDropdownMenuItem>
+                                    </BbDropdownMenuContent>
+                                </BbDropdownMenu>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                    </Columns>
+                    <DetailTemplate Context="order">
+                        <div class="p-4 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-semibold text-sm">Order #@order.Id</h4>
+                                <BbBadge Variant="@GetStatusVariant(order.Status)" Class="text-xs">@order.Status</BbBadge>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div>
+                                    <p class="text-muted-foreground">Customer</p>
+                                    <p class="font-medium">@order.Customer</p>
+                                </div>
+                                <div>
+                                    <p class="text-muted-foreground">Email</p>
+                                    <p class="font-medium">@order.Email</p>
+                                </div>
+                                <div>
+                                    <p class="text-muted-foreground">Category</p>
+                                    <p class="font-medium">@order.Category</p>
+                                </div>
+                                <div>
+                                    <p class="text-muted-foreground">Notes</p>
+                                    <p class="font-medium">@order.Notes</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                            <div>
-                                <p class="text-muted-foreground">Customer</p>
-                                <p class="font-medium">@order.Customer</p>
-                            </div>
-                            <div>
-                                <p class="text-muted-foreground">Email</p>
-                                <p class="font-medium">@order.Email</p>
-                            </div>
-                            <div>
-                                <p class="text-muted-foreground">Category</p>
-                                <p class="font-medium">@order.Category</p>
-                            </div>
-                            <div>
-                                <p class="text-muted-foreground">Notes</p>
-                                <p class="font-medium">@order.Notes</p>
-                            </div>
-                        </div>
-                    </div>
-                </DetailTemplate>
-        </BbDataGrid>
+                    </DetailTemplate>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
 
     </ChildContent>
 </PageWrapper>
