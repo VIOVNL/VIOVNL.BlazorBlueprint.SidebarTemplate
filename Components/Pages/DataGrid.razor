@@ -1,0 +1,239 @@
+@page "/datagrid"
+
+<PageTitle>Data Grid</PageTitle>
+
+<PageWrapper Title="Data Grid" Description="Enterprise-grade data grid with sorting, filtering, grouping, and more.">
+    <ActionButtons>
+        <BbButton Variant="ButtonVariant.Outline" OnClick="ResetState">
+            <LucideIcon Name="rotate-ccw" class="h-4 w-4 mr-2" />
+            Reset
+        </BbButton>
+        <BbButton OnClick="AddOrder">
+            <LucideIcon Name="plus" class="h-4 w-4 mr-2" />
+            Add Order
+        </BbButton>
+    </ActionButtons>
+    <ChildContent>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Total Orders</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_orders.Count</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <LucideIcon Name="shopping-cart" class="h-5 w-5 text-primary" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Revenue</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_orders.Sum(o => o.Total).ToString("C0")</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+                            <LucideIcon Name="dollar-sign" class="h-5 w-5 text-green-500" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Fulfilled</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_orders.Count(o => o.Status == "Fulfilled")</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
+                            <LucideIcon Name="package-check" class="h-5 w-5 text-blue-500" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Pending</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_orders.Count(o => o.Status == "Pending")</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">
+                            <LucideIcon Name="clock" class="h-5 w-5 text-amber-500" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        <BbDataGrid TData="OrderRow" Items="_orders"
+                        SelectionMode="DataTableSelectionMode.Multiple"
+                        @bind-SelectedItems="_selectedOrders"
+                        Resizable="true"
+                        ShowSearch="true"
+                        SearchPlaceholder="Search orders..."
+                        InitialPageSize="10"
+                        ShowPagination="true"
+                        ItemKey="@(o => o.Id)"
+                        OnRowExpand="@(o => { })"
+                        RowClass="@(o => o.Status == "Cancelled" ? "opacity-50" : null)">
+                <Toolbar>
+                    <BbDataGridColumnVisibility TData="OrderRow" />
+                </Toolbar>
+                <Columns>
+                    <BbDataGridSelectColumn  />
+                    <BbDataGridExpandColumn  />
+                    <BbDataGridPropertyColumn Property="@(o => o.Id)" Title="#" Width="80px"
+                                               Sortable="true" CellClass="tabular-nums font-mono text-xs" />
+                    <BbDataGridPropertyColumn Property="@(o => o.Customer)" Sortable="true" Filterable="true" />
+                    <BbDataGridPropertyColumn Property="@(o => o.Email)" Sortable="true" Filterable="true"
+                                               CellClass="text-muted-foreground text-sm" />
+                    <BbDataGridTemplateColumn Title="Status" Sortable="true">
+                        <ChildContent Context="order">
+                            <BbBadge Variant="@GetStatusVariant(order.Status)">@order.Status</BbBadge>
+                        </ChildContent>
+                    </BbDataGridTemplateColumn>
+                    <BbDataGridPropertyColumn Property="@(o => o.Category)" Sortable="true" Filterable="true">
+                        <CellTemplate Context="order">
+                            <BbBadge Variant="BadgeVariant.Outline">@order.Category</BbBadge>
+                        </CellTemplate>
+                    </BbDataGridPropertyColumn>
+                    <BbDataGridPropertyColumn Property="@(o => o.Items)" Title="Qty" Sortable="true"
+                                               CellClass="tabular-nums" Width="80px" />
+                    <BbDataGridPropertyColumn Property="@(o => o.Total)" Format="C2" Sortable="true"
+                                               CellClass="tabular-nums font-medium" />
+                    <BbDataGridPropertyColumn Property="@(o => o.Date)" Format="MMM d, yyyy" Sortable="true"
+                                               CellClass="tabular-nums text-sm text-muted-foreground" />
+                    <BbDataGridTemplateColumn Title="" Width="60px">
+                        <ChildContent Context="order">
+                            <BbDropdownMenu>
+                                <BbDropdownMenuTrigger>
+                                    <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Icon" Class="h-8 w-8">
+                                        <LucideIcon Name="ellipsis" class="h-4 w-4" />
+                                    </BbButton>
+                                </BbDropdownMenuTrigger>
+                                <BbDropdownMenuContent Align="PopoverAlign.End">
+                                    <BbDropdownMenuLabel>Actions</BbDropdownMenuLabel>
+                                    <BbDropdownMenuSeparator />
+                                    <BbDropdownMenuItem>
+                                        <LucideIcon Name="eye" class="h-4 w-4 mr-2" />
+                                        View Details
+                                    </BbDropdownMenuItem>
+                                    <BbDropdownMenuItem>
+                                        <LucideIcon Name="pencil" class="h-4 w-4 mr-2" />
+                                        Edit
+                                    </BbDropdownMenuItem>
+                                    <BbDropdownMenuItem>
+                                        <LucideIcon Name="copy" class="h-4 w-4 mr-2" />
+                                        Duplicate
+                                    </BbDropdownMenuItem>
+                                    <BbDropdownMenuSeparator />
+                                    <BbDropdownMenuItem Class="text-destructive">
+                                        <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                                        Delete
+                                    </BbDropdownMenuItem>
+                                </BbDropdownMenuContent>
+                            </BbDropdownMenu>
+                        </ChildContent>
+                    </BbDataGridTemplateColumn>
+                </Columns>
+                <DetailTemplate Context="order">
+                    <div class="p-4 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <h4 class="font-semibold text-sm">Order #@order.Id</h4>
+                            <BbBadge Variant="@GetStatusVariant(order.Status)" Class="text-xs">@order.Status</BbBadge>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                                <p class="text-muted-foreground">Customer</p>
+                                <p class="font-medium">@order.Customer</p>
+                            </div>
+                            <div>
+                                <p class="text-muted-foreground">Email</p>
+                                <p class="font-medium">@order.Email</p>
+                            </div>
+                            <div>
+                                <p class="text-muted-foreground">Category</p>
+                                <p class="font-medium">@order.Category</p>
+                            </div>
+                            <div>
+                                <p class="text-muted-foreground">Notes</p>
+                                <p class="font-medium">@order.Notes</p>
+                            </div>
+                        </div>
+                    </div>
+                </DetailTemplate>
+        </BbDataGrid>
+
+    </ChildContent>
+</PageWrapper>
+
+@code {
+    private IReadOnlyCollection<OrderRow> _selectedOrders = Array.Empty<OrderRow>();
+    private List<OrderRow> _orders = null!;
+
+    protected override void OnInitialized() => _orders = new(_seedOrders);
+
+    private void ResetState()
+    {
+        _selectedOrders = Array.Empty<OrderRow>();
+        _orders = new(_seedOrders);
+    }
+
+    private void AddOrder()
+    {
+        var id = _orders.Count > 0 ? _orders.Max(o => o.Id) + 1 : 1001;
+        var names = new[] { "Emma Wilson", "Liam Johnson", "Sophia Brown", "Noah Davis" };
+        var categories = new[] { "Electronics", "Clothing", "Food", "Books", "Home" };
+        var statuses = new[] { "Pending", "Processing", "Fulfilled" };
+        var name = names[Random.Shared.Next(names.Length)];
+        _orders = new(_orders)
+        {
+            new OrderRow(
+                id,
+                name,
+                $"{name.Split(' ')[0].ToLower()}@example.com",
+                statuses[Random.Shared.Next(statuses.Length)],
+                categories[Random.Shared.Next(categories.Length)],
+                Random.Shared.Next(1, 10),
+                Math.Round((decimal)(Random.Shared.NextDouble() * 500 + 20), 2),
+                DateTime.Today.AddDays(-Random.Shared.Next(0, 30)),
+                "New order"
+            )
+        };
+    }
+
+    private static BadgeVariant GetStatusVariant(string status) => status switch
+    {
+        "Fulfilled" => BadgeVariant.Default,
+        "Processing" => BadgeVariant.Secondary,
+        "Pending" => BadgeVariant.Outline,
+        "Cancelled" => BadgeVariant.Destructive,
+        _ => BadgeVariant.Outline
+    };
+
+    private record OrderRow(int Id, string Customer, string Email, string Status, string Category, int Items, decimal Total, DateTime Date, string Notes);
+
+    private static readonly List<OrderRow> _seedOrders = new()
+    {
+        new(1001, "Alice Chen", "alice@example.com", "Fulfilled", "Electronics", 3, 299.99m, new DateTime(2025, 3, 1), "Express shipping requested"),
+        new(1002, "Bob Smith", "bob@example.com", "Processing", "Clothing", 5, 149.50m, new DateTime(2025, 3, 3), "Gift wrap"),
+        new(1003, "Carol White", "carol@example.com", "Pending", "Food", 2, 45.00m, new DateTime(2025, 3, 5), "Dietary restrictions noted"),
+        new(1004, "Dave Brown", "dave@example.com", "Fulfilled", "Books", 1, 24.99m, new DateTime(2025, 3, 6), "Signed copy"),
+        new(1005, "Eve Martinez", "eve@example.com", "Cancelled", "Electronics", 4, 599.99m, new DateTime(2025, 3, 7), "Customer requested cancellation"),
+        new(1006, "Frank Lee", "frank@example.com", "Processing", "Home", 2, 189.00m, new DateTime(2025, 3, 8), "Fragile items"),
+        new(1007, "Grace Kim", "grace@example.com", "Fulfilled", "Clothing", 6, 320.00m, new DateTime(2025, 3, 9), "Loyalty discount applied"),
+        new(1008, "Henry Zhao", "henry@example.com", "Pending", "Electronics", 1, 799.99m, new DateTime(2025, 3, 10), "Awaiting stock"),
+        new(1009, "Iris Patel", "iris@example.com", "Fulfilled", "Books", 3, 67.50m, new DateTime(2025, 3, 11), "Bundle deal"),
+        new(1010, "Jack Wilson", "jack@example.com", "Processing", "Food", 8, 112.00m, new DateTime(2025, 3, 12), "Subscription order"),
+        new(1011, "Karen Liu", "karen@example.com", "Fulfilled", "Home", 2, 245.00m, new DateTime(2025, 3, 13), "Assembly required"),
+        new(1012, "Leo Garcia", "leo@example.com", "Pending", "Clothing", 4, 180.00m, new DateTime(2025, 3, 14), "Size exchange possible"),
+        new(1013, "Mia Johnson", "mia@example.com", "Fulfilled", "Electronics", 1, 1299.99m, new DateTime(2025, 3, 15), "Premium warranty"),
+        new(1014, "Nathan Park", "nathan@example.com", "Processing", "Books", 7, 98.00m, new DateTime(2025, 3, 16), "Classroom order"),
+        new(1015, "Olivia Davis", "olivia@example.com", "Cancelled", "Food", 3, 55.50m, new DateTime(2025, 3, 17), "Allergy concern"),
+    };
+}
