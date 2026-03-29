@@ -4,7 +4,7 @@
 @implements IAsyncDisposable
 
 <BbSidebarProvider Variant="SidebarVariant.Inset" HeightClass="h-full">
-    <BbSidebar Collapsible="false">
+    <BbSidebar>
         <BbSidebarHeader>
             <BbSidebarHeaderContent>
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
@@ -136,6 +136,9 @@
     </BbSidebar>
 
     <BbSidebarInset Class="min-w-0 overflow-hidden">
+        <header class="flex h-12 items-center gap-2 border-b px-4 md:hidden">
+            <BbSidebarTrigger />
+        </header>
         @Body
     </BbSidebarInset>
 </BbSidebarProvider>
