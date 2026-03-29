@@ -1807,6 +1807,7 @@
                 <BbCardDescription>Sortable, filterable, paginated data grid</BbCardDescription>
             </BbCardHeader>
             <BbCardContent>
+                <DataTableWrapper>
                 <BbDataTable TData="ProductRow" Data="@_products"
                              SelectionMode="DataTableSelectionMode.Multiple"
                              InitialPageSize="5" ShowToolbar ShowPagination>
@@ -1837,6 +1838,7 @@
                         </BbDataTableColumn>
                     </Columns>
                 </BbDataTable>
+                </DataTableWrapper>
             </BbCardContent>
         </BbCard>
 

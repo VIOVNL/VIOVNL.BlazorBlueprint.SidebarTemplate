@@ -16,6 +16,7 @@
     }
     else
     {
+        <DataTableWrapper>
         <BbDataTable TData="WeatherForecast" Data="@_forecasts"
                      InitialPageSize="10"
                      ShowToolbar="true"
@@ -46,6 +47,7 @@
                 </BbDataTableColumn>
             </Columns>
         </BbDataTable>
+        </DataTableWrapper>
     }
 </PageWrapper>
 

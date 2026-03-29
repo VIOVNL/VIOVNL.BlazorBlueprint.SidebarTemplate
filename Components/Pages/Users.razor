@@ -69,6 +69,7 @@
             </BbCard>
         </div>
 
+        <DataTableWrapper>
         <BbDataTable TData="UserRow" Data="@_users"
                      SelectionMode="DataTableSelectionMode.Multiple"
                      @bind-SelectedItems="_selectedUsers"
@@ -154,6 +155,7 @@
                 </BbDataTableColumn>
             </Columns>
         </BbDataTable>
+        </DataTableWrapper>
     </ChildContent>
 </PageWrapper>
 
