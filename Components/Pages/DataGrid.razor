@@ -405,6 +405,95 @@
             </BbCardContent>
         </BbCard>
 
+        @* ───── 7. Custom Styling Showcase ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>Custom Styling</BbCardTitle>
+                <BbCardDescription>Showcases every CSS customization parameter: Class, RowClass, CellClass, HeaderClass, StripeClass, TableContainerClass, FilterBarClass, NoWrap, and column pinning.</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="ServerMetric" Items="_serverMetrics"
+                            Class="rounded-none"
+                            TableContainerClass="border border-dashed border-primary/20 rounded-lg"
+                            Striped="true"
+                            StripeClass="bg-muted/30"
+                            RowClass="@(m => m.CpuUsage > 90 ? "!bg-destructive/10 hover:!bg-destructive/15" : m.CpuUsage > 70 ? "!bg-amber-500/10 hover:!bg-amber-500/15" : null)"
+                            ShowFilterBar="true"
+                            FilterBarClass="bg-muted/50 border-b border-border"
+                            ShowPagination="true"
+                            InitialPageSize="10"
+                            StickyHeader="true">
+                    <Columns>
+                        <BbDataGridPropertyColumn Property="@(m => m.Name)" Title="Server"
+                                                   Sortable="true" Filterable="true"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary"
+                                                   CellClass="font-semibold"
+                                                   Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Left"
+                                                   NoWrap="true" />
+                        <BbDataGridPropertyColumn Property="@(m => m.Region)" Title="Region"
+                                                   Sortable="true" Filterable="true"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary"
+                                                   CellClass="text-muted-foreground text-sm" />
+                        <BbDataGridTemplateColumn Title="CPU %" Sortable="true"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary text-right"
+                                                   CellClass="text-right tabular-nums" Width="120px">
+                            <ChildContent Context="metric">
+                                <div class="flex items-center justify-end gap-2">
+                                    <div class="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full transition-all @(metric.CpuUsage > 90 ? "bg-destructive" : metric.CpuUsage > 70 ? "bg-amber-500" : "bg-green-500")"
+                                             style="width: @(metric.CpuUsage)%"></div>
+                                    </div>
+                                    <span class="w-10 text-right font-mono text-xs @(metric.CpuUsage > 90 ? "text-destructive font-bold" : metric.CpuUsage > 70 ? "text-amber-500 font-medium" : "text-muted-foreground")">
+                                        @metric.CpuUsage%
+                                    </span>
+                                </div>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridTemplateColumn Title="Memory" Sortable="true"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary text-right"
+                                                   CellClass="text-right tabular-nums" Width="120px">
+                            <ChildContent Context="metric">
+                                <div class="flex items-center justify-end gap-2">
+                                    <div class="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full bg-blue-500 transition-all"
+                                             style="width: @(metric.MemoryUsage)%"></div>
+                                    </div>
+                                    <span class="w-10 text-right font-mono text-xs text-muted-foreground">@metric.MemoryUsage%</span>
+                                </div>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                        <BbDataGridPropertyColumn Property="@(m => m.Requests)" Title="Req/s"
+                                                   Sortable="true"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary"
+                                                   CellClass="tabular-nums font-mono text-sm"
+                                                   NoWrap="true" Width="100px" />
+                        <BbDataGridPropertyColumn Property="@(m => m.Latency)" Title="Latency"
+                                                   Sortable="true"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary"
+                                                   CellClass="tabular-nums font-mono text-sm"
+                                                   NoWrap="true" Width="100px">
+                            <CellTemplate Context="metric">
+                                <span class="font-mono text-xs tabular-nums @(metric.Latency > 200 ? "text-destructive font-bold" : metric.Latency > 100 ? "text-amber-500" : "text-muted-foreground")">
+                                    @(metric.Latency)ms
+                                </span>
+                            </CellTemplate>
+                        </BbDataGridPropertyColumn>
+                        <BbDataGridTemplateColumn Title="Status" Width="110px"
+                                                   HeaderClass="bg-primary/5 font-bold text-primary"
+                                                   CellClass="text-center"
+                                                   Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Right">
+                            <ChildContent Context="metric">
+                                <BbBadge Variant="@(metric.Status == "Healthy" ? BadgeVariant.Default : metric.Status == "Degraded" ? BadgeVariant.Secondary : BadgeVariant.Destructive)"
+                                         Class="text-xs">
+                                    @metric.Status
+                                </BbBadge>
+                            </ChildContent>
+                        </BbDataGridTemplateColumn>
+                    </Columns>
+                </BbDataGrid>
+            </BbCardContent>
+        </BbCard>
+
     </ChildContent>
 </PageWrapper>
 
@@ -511,6 +600,17 @@
     };
 
     // ───── Data Models ─────
+    private class ServerMetric
+    {
+        public string Name { get; set; } = "";
+        public string Region { get; set; } = "";
+        public int CpuUsage { get; set; }
+        public int MemoryUsage { get; set; }
+        public int Requests { get; set; }
+        public int Latency { get; set; }
+        public string Status { get; set; } = "";
+    }
+
     private class OrderRow
     {
         public int Id { get; set; }
@@ -588,6 +688,25 @@
         new(1013, "Mia Johnson", "mia@example.com", "Fulfilled", "Electronics", 1, 1299.99m, new DateTime(2025, 3, 15), "Premium warranty"),
         new(1014, "Nathan Park", "nathan@example.com", "Processing", "Books", 7, 98.00m, new DateTime(2025, 3, 16), "Classroom order"),
         new(1015, "Olivia Davis", "olivia@example.com", "Cancelled", "Food", 3, 55.50m, new DateTime(2025, 3, 17), "Allergy concern"),
+    };
+
+    private static readonly List<ServerMetric> _serverMetrics = new()
+    {
+        new() { Name = "web-prod-01", Region = "US East", CpuUsage = 45, MemoryUsage = 62, Requests = 1250, Latency = 42, Status = "Healthy" },
+        new() { Name = "web-prod-02", Region = "US East", CpuUsage = 78, MemoryUsage = 81, Requests = 980, Latency = 115, Status = "Degraded" },
+        new() { Name = "web-prod-03", Region = "US West", CpuUsage = 23, MemoryUsage = 45, Requests = 2100, Latency = 28, Status = "Healthy" },
+        new() { Name = "api-prod-01", Region = "EU West", CpuUsage = 92, MemoryUsage = 88, Requests = 3400, Latency = 250, Status = "Critical" },
+        new() { Name = "api-prod-02", Region = "EU West", CpuUsage = 56, MemoryUsage = 70, Requests = 2800, Latency = 67, Status = "Healthy" },
+        new() { Name = "db-primary", Region = "US East", CpuUsage = 95, MemoryUsage = 92, Requests = 5600, Latency = 310, Status = "Critical" },
+        new() { Name = "db-replica-01", Region = "US East", CpuUsage = 34, MemoryUsage = 58, Requests = 1800, Latency = 15, Status = "Healthy" },
+        new() { Name = "db-replica-02", Region = "US West", CpuUsage = 41, MemoryUsage = 55, Requests = 1600, Latency = 18, Status = "Healthy" },
+        new() { Name = "cache-01", Region = "US East", CpuUsage = 12, MemoryUsage = 95, Requests = 8900, Latency = 3, Status = "Degraded" },
+        new() { Name = "cache-02", Region = "EU West", CpuUsage = 8, MemoryUsage = 72, Requests = 7200, Latency = 5, Status = "Healthy" },
+        new() { Name = "worker-01", Region = "US East", CpuUsage = 88, MemoryUsage = 65, Requests = 450, Latency = 0, Status = "Healthy" },
+        new() { Name = "worker-02", Region = "US West", CpuUsage = 15, MemoryUsage = 30, Requests = 120, Latency = 0, Status = "Healthy" },
+        new() { Name = "cdn-edge-01", Region = "Asia Pacific", CpuUsage = 72, MemoryUsage = 48, Requests = 12000, Latency = 89, Status = "Degraded" },
+        new() { Name = "cdn-edge-02", Region = "Asia Pacific", CpuUsage = 38, MemoryUsage = 42, Requests = 9500, Latency = 45, Status = "Healthy" },
+        new() { Name = "monitor-01", Region = "US East", CpuUsage = 5, MemoryUsage = 22, Requests = 50, Latency = 12, Status = "Healthy" },
     };
 
     private static readonly List<TeamMember> _teamMembers = new()
