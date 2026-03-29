@@ -450,7 +450,7 @@
                 </div>
             </BbCardHeader>
             <BbCardContent Class="px-4 py-0">
-                <BbDataGrid TData="ServerMetric" Items="_serverMetrics"
+                <BbDataGrid @key="_styleVersion" TData="ServerMetric" Items="_serverMetrics"
                             Class="@(_css.GridClass)"
                             TableContainerClass="@(_css.TableContainerClass)"
                             Striped="_css.IsStriped"
@@ -650,7 +650,7 @@
         ["gridClass"] = "rounded-none on grid root",
         ["tableContainer"] = "Dashed border on scroll container",
         ["striped"] = "Alternating row backgrounds",
-        ["stripeClass"] = "Custom even:bg-muted/50 stripe color",
+        ["stripeClass"] = "Custom even:bg-muted/50 stripe",
         ["rowClass"] = "Red/amber bg for high CPU rows",
         ["headerClass"] = "Primary-tinted bold headers",
         ["cellClass"] = "font-semibold, font-mono per column",
@@ -662,11 +662,13 @@
     };
 
     private int ActiveToggleCount => _styleToggles.Count(t => t.Value);
+    private int _styleVersion;
 
     private void SetStyleToggle(string key, bool value)
     {
         _styleToggles[key] = value;
         _css = new ComputedCss(_styleToggles);
+        _styleVersion++;
     }
 
     private void ToggleAllStyles()
@@ -675,6 +677,7 @@
         foreach (var key in _styleToggles.Keys.ToList())
             _styleToggles[key] = !allOn;
         _css = new ComputedCss(_styleToggles);
+        _styleVersion++;
     }
 
     private ComputedCss _css = new(null);

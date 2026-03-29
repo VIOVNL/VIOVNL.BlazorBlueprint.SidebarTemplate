@@ -379,9 +379,6 @@
   .h-12 {
     height: calc(var(--spacing) * 12);
   }
-  .h-\[400px\] {
-    height: 400px;
-  }
   .h-auto {
     height: auto;
   }
@@ -459,9 +456,6 @@
   }
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
-  }
-  .min-w-\[640px\] {
-    min-width: 640px;
   }
   .flex-1 {
     flex: 1;
@@ -597,10 +591,6 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .border-0 {
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-  }
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
@@ -728,12 +718,6 @@
     background-color: var(--muted-foreground);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
-    }
-  }
-  .bg-muted\/30 {
-    background-color: var(--muted);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--muted) 30%, transparent);
     }
   }
   .bg-muted\/50 {
@@ -927,14 +911,6 @@
     --tw-shadow: var(--shadow-lg);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  .shadow-none {
-    --tw-shadow: 0 0 #0000;
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-  .shadow-sm {
-    --tw-shadow: var(--shadow-sm);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
@@ -966,14 +942,6 @@
       background-color: var(--muted);
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--muted) 50%, transparent);
-      }
-    }
-  }
-  .even\:bg-primary\/10 {
-    &:nth-child(even) {
-      background-color: var(--primary);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--primary) 10%, transparent);
       }
     }
   }
