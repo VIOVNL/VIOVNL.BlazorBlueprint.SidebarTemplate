@@ -9,24 +9,38 @@ A production-ready Blazor Server application template with a polished collapsibl
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/screenshot-1.png" alt="Dashboard" width="800" />
+  <img src="screenshots/screenshot-1.png" alt="Dashboard" width="444" />
 </p>
 
 <p align="center">
-  <img src="screenshots/screenshot-2.png" alt="Analytics" width="800" />
+  <img src="screenshots/screenshot-2.png" alt="Analytics" width="444" />
 </p>
 
 <p align="center">
-  <img src="screenshots/screenshot-3.png" alt="Dark mode" width="800" />
+  <img src="screenshots/screenshot-3.png" alt="Dark mode" width="444" />
 </p>
 
 <p align="center">
-  <img src="screenshots/screenshot-4.png" alt="Components" width="800" />
+  <img src="screenshots/screenshot-4.png" alt="Components" width="444" />
 </p>
 <p align="center">
-  <img src="screenshots/screenshot-5.png" alt="Components" width="800" />
+  <img src="screenshots/screenshot-5.png" alt="Components" width="444" />
 </p>
-
+<p align="center">
+  <img src="screenshots/screenshot-6.png" alt="Components" width="444" />
+</p>
+<p align="center">
+  <img src="screenshots/screenshot-7.png" alt="Components" width="444" />
+</p>
+<p align="center">
+  <img src="screenshots/screenshot-8.png" alt="Components" width="444" />
+</p>
+<p align="center">
+  <img src="screenshots/screenshot-9.png" alt="Components" width="444" />
+</p>
+<p align="center">
+  <img src="screenshots/screenshot-10.png" alt="Components" width="444" />
+</p>
 ---
 
 ## Features
