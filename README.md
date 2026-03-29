@@ -8,38 +8,64 @@ A production-ready Blazor Server application template with a polished collapsibl
 
 ## Screenshots
 
-<p align="center">
-  <img src="screenshots/screenshot-1.png" alt="Dashboard"  />
-</p>
+### Default — Dark
 
 <p align="center">
-  <img src="screenshots/screenshot-2.png" alt="Analytics"  />
+  <img src="screenshots/theme-default-dark.png" alt="Default theme dark mode" />
 </p>
 
-<p align="center">
-  <img src="screenshots/screenshot-3.png" alt="Dark mode"  />
-</p>
+### Default — Light
 
 <p align="center">
-  <img src="screenshots/screenshot-4.png" alt="Components"  />
+  <img src="screenshots/theme-default-light.png" alt="Default theme light mode" />
 </p>
+
+### Claude — Dark
+
 <p align="center">
-  <img src="screenshots/screenshot-5.png" alt="Components"  />
+  <img src="screenshots/theme-claude-dark.png" alt="Claude theme dark mode" />
 </p>
+
+### Claude — Light
+
 <p align="center">
-  <img src="screenshots/screenshot-6.png" alt="Components"  />
+  <img src="screenshots/theme-claude-light.png" alt="Claude theme light mode" />
 </p>
+
+### Modern Minimal — Dark
+
 <p align="center">
-  <img src="screenshots/screenshot-7.png" alt="Components"  />
+  <img src="screenshots/theme-modernminimal-dark.png" alt="Modern Minimal theme dark mode" />
 </p>
+
+### Modern Minimal — Light
+
 <p align="center">
-  <img src="screenshots/screenshot-8.png" alt="Components"  />
+  <img src="screenshots/theme-modernminimal-light.png" alt="Modern Minimal theme light mode" />
 </p>
+
+### Light Green — Dark
+
 <p align="center">
-  <img src="screenshots/screenshot-9.png" alt="Components"  />
+  <img src="screenshots/theme-lightgreen-dark.png" alt="Light Green theme dark mode" />
 </p>
+
+### Light Green — Light
+
 <p align="center">
-  <img src="screenshots/screenshot-10.png" alt="Components"  />
+  <img src="screenshots/theme-lightgreen-light.png" alt="Light Green theme light mode" />
+</p>
+
+### WhatsApp — Dark
+
+<p align="center">
+  <img src="screenshots/theme-whatsapp-dark.png" alt="WhatsApp theme dark mode" />
+</p>
+
+### WhatsApp — Light
+
+<p align="center">
+  <img src="screenshots/theme-whatsapp-light.png" alt="WhatsApp theme light mode" />
 </p>
 ---
 
