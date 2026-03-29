@@ -408,34 +408,72 @@
         @* ───── 7. Custom Styling Showcase ───── *@
         <BbCard>
             <BbCardHeader>
-                <BbCardTitle>Custom Styling</BbCardTitle>
-                <BbCardDescription>Showcases every CSS customization parameter: Class, RowClass, CellClass, HeaderClass, StripeClass, TableContainerClass, FilterBarClass, NoWrap, and column pinning.</BbCardDescription>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <BbCardTitle>Custom Styling</BbCardTitle>
+                        <BbCardDescription>Toggle CSS customization parameters on/off to see their effect in real time.</BbCardDescription>
+                    </div>
+                    <BbPopover>
+                        <BbPopoverTrigger>
+                            <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small">
+                                <LucideIcon Name="sliders-horizontal" class="h-4 w-4 mr-2" />
+                                Customize
+                                <BbBadge Variant="BadgeVariant.Secondary" Class="ml-2 text-xs">@ActiveToggleCount</BbBadge>
+                            </BbButton>
+                        </BbPopoverTrigger>
+                        <BbPopoverContent Align="PopoverAlign.End" Class="w-80">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-medium text-sm">Style Toggles</h4>
+                                    <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Small"
+                                              OnClick="ToggleAllStyles">
+                                        @(_styleToggles.All(t => t.Value) ? "Disable All" : "Enable All")
+                                    </BbButton>
+                                </div>
+                                <BbSeparator />
+                                <div class="space-y-3">
+                                    @foreach (var toggle in _styleToggles)
+                                    {
+                                        var key = toggle.Key;
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-sm font-medium">@_styleLabels[key]</p>
+                                                <p class="text-xs text-muted-foreground">@_styleDescriptions[key]</p>
+                                            </div>
+                                            <BbSwitch Checked="@toggle.Value" CheckedChanged="@(v => SetStyleToggle(key, v))" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </BbPopoverContent>
+                    </BbPopover>
+                </div>
             </BbCardHeader>
             <BbCardContent Class="px-4 py-0">
                 <BbDataGrid TData="ServerMetric" Items="_serverMetrics"
-                            Class="rounded-none"
-                            TableContainerClass="border border-dashed border-primary/20 rounded-lg"
-                            Striped="true"
-                            StripeClass="bg-muted/30"
-                            RowClass="@(m => m.CpuUsage > 90 ? "!bg-destructive/10 hover:!bg-destructive/15" : m.CpuUsage > 70 ? "!bg-amber-500/10 hover:!bg-amber-500/15" : null)"
-                            ShowFilterBar="true"
-                            FilterBarClass="bg-muted/50 border-b border-border"
+                            Class="@(_css.GridClass)"
+                            TableContainerClass="@(_css.TableContainerClass)"
+                            Striped="_css.IsStriped"
+                            StripeClass="@(_css.StripeClass)"
+                            RowClass="@(_css.RowClassFunc)"
+                            ShowFilterBar="_css.IsFilterBar"
+                            FilterBarClass="@(_css.FilterBarClass)"
                             ShowPagination="true"
                             InitialPageSize="10"
-                            StickyHeader="true">
+                            StickyHeader="_css.IsStickyHeader">
                     <Columns>
                         <BbDataGridPropertyColumn Property="@(m => m.Name)" Title="Server"
                                                    Sortable="true" Filterable="true"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary"
-                                                   CellClass="font-semibold"
-                                                   Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Left"
-                                                   NoWrap="true" />
+                                                   HeaderClass="@(_css.HeaderClass)"
+                                                   CellClass="@(_css.ServerCellClass)"
+                                                   Pinned="@(_css.PinLeft)"
+                                                   NoWrap="_css.IsNoWrap" />
                         <BbDataGridPropertyColumn Property="@(m => m.Region)" Title="Region"
                                                    Sortable="true" Filterable="true"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary"
-                                                   CellClass="text-muted-foreground text-sm" />
+                                                   HeaderClass="@(_css.HeaderClass)"
+                                                   CellClass="@(_css.RegionCellClass)" />
                         <BbDataGridTemplateColumn Title="CPU %" Sortable="true"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary text-right"
+                                                   HeaderClass="@(_css.HeaderClassRight)"
                                                    CellClass="text-right tabular-nums" Width="120px">
                             <ChildContent Context="metric">
                                 <div class="flex items-center justify-end gap-2">
@@ -450,7 +488,7 @@
                             </ChildContent>
                         </BbDataGridTemplateColumn>
                         <BbDataGridTemplateColumn Title="Memory" Sortable="true"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary text-right"
+                                                   HeaderClass="@(_css.HeaderClassRight)"
                                                    CellClass="text-right tabular-nums" Width="120px">
                             <ChildContent Context="metric">
                                 <div class="flex items-center justify-end gap-2">
@@ -464,14 +502,14 @@
                         </BbDataGridTemplateColumn>
                         <BbDataGridPropertyColumn Property="@(m => m.Requests)" Title="Req/s"
                                                    Sortable="true"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary"
-                                                   CellClass="tabular-nums font-mono text-sm"
-                                                   NoWrap="true" Width="100px" />
+                                                   HeaderClass="@(_css.HeaderClass)"
+                                                   CellClass="@(_css.MonoCellClass)"
+                                                   NoWrap="_css.IsNoWrap" Width="100px" />
                         <BbDataGridPropertyColumn Property="@(m => m.Latency)" Title="Latency"
                                                    Sortable="true"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary"
-                                                   CellClass="tabular-nums font-mono text-sm"
-                                                   NoWrap="true" Width="100px">
+                                                   HeaderClass="@(_css.HeaderClass)"
+                                                   CellClass="@(_css.MonoCellClass)"
+                                                   NoWrap="_css.IsNoWrap" Width="100px">
                             <CellTemplate Context="metric">
                                 <span class="font-mono text-xs tabular-nums @(metric.Latency > 200 ? "text-destructive font-bold" : metric.Latency > 100 ? "text-amber-500" : "text-muted-foreground")">
                                     @(metric.Latency)ms
@@ -479,9 +517,9 @@
                             </CellTemplate>
                         </BbDataGridPropertyColumn>
                         <BbDataGridTemplateColumn Title="Status" Width="110px"
-                                                   HeaderClass="bg-primary/5 font-bold text-primary"
-                                                   CellClass="text-center"
-                                                   Pinned="BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Right">
+                                                   HeaderClass="@(_css.HeaderClass)"
+                                                   CellClass="@(_css.StatusCellClass)"
+                                                   Pinned="@(_css.PinRight)">
                             <ChildContent Context="metric">
                                 <BbBadge Variant="@(metric.Status == "Healthy" ? BadgeVariant.Default : metric.Status == "Degraded" ? BadgeVariant.Secondary : BadgeVariant.Destructive)"
                                          Class="text-xs">
@@ -516,6 +554,7 @@
         _orders = new(_seedOrders);
         _logEntries = GenerateLogEntries(1000);
         _fileTree = GenerateFileTree();
+        _css = new ComputedCss(_styleToggles);
     }
 
     private void ResetState()
@@ -571,6 +610,102 @@
     private void OnMemberSelected(IReadOnlyCollection<TeamMember> selected)
     {
         _selectedMember = selected.FirstOrDefault();
+    }
+
+    // ───── Styling Toggles ─────
+    private readonly Dictionary<string, bool> _styleToggles = new()
+    {
+        ["gridClass"] = true,
+        ["tableContainer"] = true,
+        ["striped"] = true,
+        ["stripeClass"] = true,
+        ["rowClass"] = true,
+        ["headerClass"] = true,
+        ["cellClass"] = true,
+        ["filterBar"] = true,
+        ["filterBarClass"] = true,
+        ["noWrap"] = true,
+        ["pinning"] = true,
+        ["stickyHeader"] = true,
+    };
+
+    private static readonly Dictionary<string, string> _styleLabels = new()
+    {
+        ["gridClass"] = "Class",
+        ["tableContainer"] = "TableContainerClass",
+        ["striped"] = "Striped",
+        ["stripeClass"] = "StripeClass",
+        ["rowClass"] = "RowClass",
+        ["headerClass"] = "HeaderClass",
+        ["cellClass"] = "CellClass",
+        ["filterBar"] = "ShowFilterBar",
+        ["filterBarClass"] = "FilterBarClass",
+        ["noWrap"] = "NoWrap",
+        ["pinning"] = "Pinned",
+        ["stickyHeader"] = "StickyHeader",
+    };
+
+    private static readonly Dictionary<string, string> _styleDescriptions = new()
+    {
+        ["gridClass"] = "rounded-none on grid root",
+        ["tableContainer"] = "Dashed border on scroll container",
+        ["striped"] = "Alternating row backgrounds",
+        ["stripeClass"] = "Custom bg-muted/30 stripe color",
+        ["rowClass"] = "Red/amber bg for high CPU rows",
+        ["headerClass"] = "Primary-tinted bold headers",
+        ["cellClass"] = "font-semibold, font-mono per column",
+        ["filterBar"] = "Per-column filter UI",
+        ["filterBarClass"] = "Muted background on filter bar",
+        ["noWrap"] = "Prevent text wrapping with ellipsis",
+        ["pinning"] = "Pin Server left, Status right",
+        ["stickyHeader"] = "Keep header visible on scroll",
+    };
+
+    private int ActiveToggleCount => _styleToggles.Count(t => t.Value);
+
+    private void SetStyleToggle(string key, bool value)
+    {
+        _styleToggles[key] = value;
+        _css = new ComputedCss(_styleToggles);
+    }
+
+    private void ToggleAllStyles()
+    {
+        var allOn = _styleToggles.All(t => t.Value);
+        foreach (var key in _styleToggles.Keys.ToList())
+            _styleToggles[key] = !allOn;
+        _css = new ComputedCss(_styleToggles);
+    }
+
+    private ComputedCss _css = new(null);
+
+    private class ComputedCss
+    {
+        private readonly Dictionary<string, bool>? _t;
+        private bool On(string k) => _t != null && _t.GetValueOrDefault(k, false);
+
+        public ComputedCss(Dictionary<string, bool>? toggles) => _t = toggles;
+
+        public bool IsStriped => On("striped");
+        public bool IsFilterBar => On("filterBar");
+        public bool IsStickyHeader => On("stickyHeader");
+        public bool IsNoWrap => On("noWrap");
+
+        public string? GridClass => On("gridClass") ? "rounded-none" : null;
+        public string? TableContainerClass => On("tableContainer") ? "border border-dashed border-primary/20 rounded-lg" : null;
+        public string? StripeClass => On("stripeClass") ? "bg-muted/30" : null;
+        public Func<ServerMetric, string?>? RowClassFunc => On("rowClass")
+            ? m => m.CpuUsage > 90 ? "!bg-destructive/10 hover:!bg-destructive/15" : m.CpuUsage > 70 ? "!bg-amber-500/10 hover:!bg-amber-500/15" : null
+            : null;
+        public string? HeaderClass => On("headerClass") ? "bg-primary/5 font-bold text-primary" : null;
+        public string? HeaderClassRight => On("headerClass") ? "bg-primary/5 font-bold text-primary text-right" : null;
+        public string? ServerCellClass => On("cellClass") ? "font-semibold" : null;
+        public string? RegionCellClass => On("cellClass") ? "text-muted-foreground text-sm" : null;
+        public string? MonoCellClass => On("cellClass") ? "tabular-nums font-mono text-sm" : null;
+        public string? StatusCellClass => On("cellClass") ? "text-center" : null;
+        public string? FilterBarClass => On("filterBarClass") ? "bg-muted/50 border-b border-border" : null;
+        public BlazorBlueprint.Primitives.DataGrid.ColumnPinning PinLeft => On("pinning") ? BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Left : BlazorBlueprint.Primitives.DataGrid.ColumnPinning.None;
+        public BlazorBlueprint.Primitives.DataGrid.ColumnPinning PinRight => On("pinning") ? BlazorBlueprint.Primitives.DataGrid.ColumnPinning.Right : BlazorBlueprint.Primitives.DataGrid.ColumnPinning.None;
     }
 
     // ───── Helpers ─────
