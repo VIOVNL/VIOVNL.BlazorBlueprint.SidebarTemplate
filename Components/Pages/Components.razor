@@ -1,0 +1,2268 @@
+@page "/components"
+@inject DialogService DialogService
+@inject ToastService ToastService
+
+<PageWrapper Title="Components" Description="BlazorBlueprint component library showcase.">
+    <ChildContent>
+
+        @* ───────────────── Buttons & Actions ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Buttons</BbCardTitle>
+                <BbCardDescription>Button variants, sizes, and icon styles</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="space-y-4">
+                <div class="flex flex-wrap items-center gap-3">
+                    <BbButton>Default</BbButton>
+                    <BbButton Variant="ButtonVariant.Secondary">Secondary</BbButton>
+                    <BbButton Variant="ButtonVariant.Outline">Outline</BbButton>
+                    <BbButton Variant="ButtonVariant.Ghost">Ghost</BbButton>
+                    <BbButton Variant="ButtonVariant.Link">Link</BbButton>
+                    <BbButton Variant="ButtonVariant.Destructive">Destructive</BbButton>
+                </div>
+                <BbSeparator />
+                <div class="flex flex-wrap items-center gap-3">
+                    <BbButton Size="ButtonSize.Small">Small</BbButton>
+                    <BbButton>Default</BbButton>
+                    <BbButton Size="ButtonSize.Large">Large</BbButton>
+                    <BbButton Size="ButtonSize.Icon"><LucideIcon Name="plus" class="h-4 w-4" /></BbButton>
+                    <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Icon"><LucideIcon Name="settings" class="h-4 w-4" /></BbButton>
+                </div>
+                <BbSeparator />
+                <div class="flex flex-wrap items-center gap-3">
+                    <BbButton>
+                        <LucideIcon Name="mail" class="h-4 w-4 mr-2" />
+                        Login with Email
+                    </BbButton>
+                    <BbButton Variant="ButtonVariant.Outline">
+                        <LucideIcon Name="download" class="h-4 w-4 mr-2" />
+                        Download
+                    </BbButton>
+                    <BbButton Disabled>Disabled</BbButton>
+                    <BbButton Loading>Loading</BbButton>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Toggle & Toggle Group ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Toggle</BbCardTitle>
+                    <BbCardDescription>Pressable toggle buttons</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex items-center gap-2">
+                        <BbToggle @bind-Pressed="_boldPressed" Variant="ToggleVariant.Outline" aria-label="Toggle bold">
+                            <LucideIcon Name="bold" class="h-4 w-4" />
+                        </BbToggle>
+                        <BbToggle @bind-Pressed="_italicPressed" Variant="ToggleVariant.Outline" aria-label="Toggle italic">
+                            <LucideIcon Name="italic" class="h-4 w-4" />
+                        </BbToggle>
+                        <BbToggle @bind-Pressed="_underlinePressed" Variant="ToggleVariant.Outline" aria-label="Toggle underline">
+                            <LucideIcon Name="underline" class="h-4 w-4" />
+                        </BbToggle>
+                        <BbSeparator Orientation="SeparatorOrientation.Vertical" Class="mx-1 h-6" />
+                        <BbToggle DefaultPressed aria-label="Toggle strikethrough">
+                            <LucideIcon Name="strikethrough" class="h-4 w-4" />
+                        </BbToggle>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Toggle Group</BbCardTitle>
+                    <BbCardDescription>Single and multi-select toggle groups</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-3">
+                    <BbToggleGroup TValue="string" @bind-Value="_alignment" Type="ToggleGroupType.Single" Variant="ToggleVariant.Outline">
+                        <BbToggleGroupItem Value="@("left")"><LucideIcon Name="align-left" class="h-4 w-4" /></BbToggleGroupItem>
+                        <BbToggleGroupItem Value="@("center")"><LucideIcon Name="align-center" class="h-4 w-4" /></BbToggleGroupItem>
+                        <BbToggleGroupItem Value="@("right")"><LucideIcon Name="align-right" class="h-4 w-4" /></BbToggleGroupItem>
+                        <BbToggleGroupItem Value="@("justify")"><LucideIcon Name="align-justify" class="h-4 w-4" /></BbToggleGroupItem>
+                    </BbToggleGroup>
+                    <p class="text-xs text-muted-foreground">Selected: @(_alignment ?? "none")</p>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Inputs & Forms ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Inputs & Forms</BbCardTitle>
+                <BbCardDescription>Form controls for user input</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <BbLabel>Text Input</BbLabel>
+                        <BbInput @bind-Value="_inputText" Placeholder="Type something..." />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Disabled Input</BbLabel>
+                        <BbInput Value="Cannot edit" Disabled />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Select</BbLabel>
+                        <BbSelect TValue="string" @bind-Value="_selectedFruit"
+                                  Options="@_fruitOptions" Placeholder="Pick a fruit..." />
+                    </div>
+                    <div class="space-y-2 col-span-2">
+                        <BbLabel>Textarea</BbLabel>
+                        <BbTextarea @bind-Value="_textareaText" Placeholder="Write a message..." />
+                    </div>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <BbLabel>Slider (@_sliderVal.ToString("F0"))</BbLabel>
+                            <BbSlider @bind-Value="_sliderVal" Min="0" Max="100" Step="1" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <BbSwitch @bind-Checked="_switchOn" />
+                            <BbLabel>@(_switchOn ? "Enabled" : "Disabled")</BbLabel>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <BbCheckbox @bind-Checked="_checkboxOn" />
+                            <BbLabel>Accept terms</BbLabel>
+                        </div>
+                    </div>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Badges & Avatars ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Badge</BbCardTitle>
+                    <BbCardDescription>Status labels and indicators</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <BbBadge>Default</BbBadge>
+                        <BbBadge Variant="BadgeVariant.Secondary">Secondary</BbBadge>
+                        <BbBadge Variant="BadgeVariant.Outline">Outline</BbBadge>
+                        <BbBadge Variant="BadgeVariant.Destructive">Destructive</BbBadge>
+                        <BbBadge Class="bg-green-500/15 text-green-600 border-green-500/20">Success</BbBadge>
+                        <BbBadge Class="bg-blue-500/15 text-blue-600 border-blue-500/20">Info</BbBadge>
+                        <BbBadge Class="bg-amber-500/15 text-amber-600 border-amber-500/20">Warning</BbBadge>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Avatar</BbCardTitle>
+                    <BbCardDescription>User profile images with fallbacks</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex items-center gap-3">
+                        <BbAvatar Size="AvatarSize.Small"><BbAvatarFallback>JD</BbAvatarFallback></BbAvatar>
+                        <BbAvatar Size="AvatarSize.Default"><BbAvatarFallback>AC</BbAvatarFallback></BbAvatar>
+                        <BbAvatar Size="AvatarSize.Large"><BbAvatarFallback>BS</BbAvatarFallback></BbAvatar>
+                        <BbSeparator Orientation="SeparatorOrientation.Vertical" Class="mx-1 h-8" />
+                        <BbAvatarGroup>
+                            <BbAvatar Class="h-9 w-9"><BbAvatarFallback Class="text-xs">JD</BbAvatarFallback></BbAvatar>
+                            <BbAvatar Class="h-9 w-9"><BbAvatarFallback Class="text-xs">AC</BbAvatarFallback></BbAvatar>
+                            <BbAvatar Class="h-9 w-9"><BbAvatarFallback Class="text-xs">BS</BbAvatarFallback></BbAvatar>
+                            <BbAvatar Class="h-9 w-9"><BbAvatarFallback Class="text-xs bg-muted">+3</BbAvatarFallback></BbAvatar>
+                        </BbAvatarGroup>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Alerts ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Alert</BbCardTitle>
+                <BbCardDescription>Callout messages for user attention</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="space-y-3">
+                <BbAlert Variant="AlertVariant.Default">
+                    <Icon><LucideIcon Name="terminal" Class="h-4 w-4" /></Icon>
+                    <ChildContent>
+                        <BbAlertTitle>Heads up!</BbAlertTitle>
+                        <BbAlertDescription>You can use the CLI to manage your project configuration.</BbAlertDescription>
+                    </ChildContent>
+                </BbAlert>
+                <BbAlert Variant="AlertVariant.Success" AccentBorder>
+                    <Icon><LucideIcon Name="circle-check" Class="h-4 w-4" /></Icon>
+                    <ChildContent>
+                        <BbAlertTitle>Deployment successful</BbAlertTitle>
+                        <BbAlertDescription>Your application has been deployed to production.</BbAlertDescription>
+                    </ChildContent>
+                </BbAlert>
+                <BbAlert Variant="AlertVariant.Warning" AccentBorder>
+                    <Icon><LucideIcon Name="triangle-alert" Class="h-4 w-4" /></Icon>
+                    <ChildContent>
+                        <BbAlertTitle>High memory usage</BbAlertTitle>
+                        <BbAlertDescription>Server memory is at 92%. Consider scaling up.</BbAlertDescription>
+                    </ChildContent>
+                </BbAlert>
+                <BbAlert Variant="AlertVariant.Danger" AccentBorder>
+                    <Icon><LucideIcon Name="circle-x" Class="h-4 w-4" /></Icon>
+                    <ChildContent>
+                        <BbAlertTitle>Build failed</BbAlertTitle>
+                        <BbAlertDescription>3 errors found during compilation. Check the build log for details.</BbAlertDescription>
+                    </ChildContent>
+                </BbAlert>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Progress & Skeleton ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Progress</BbCardTitle>
+                    <BbCardDescription>Visual progress indicators</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span>Default</span><span class="tabular-nums">72%</span>
+                        </div>
+                        <BbProgress Value="72" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span>Success</span><span class="tabular-nums">100%</span>
+                        </div>
+                        <BbProgress Value="100" IndicatorClass="bg-green-500" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span>Warning</span><span class="tabular-nums">45%</span>
+                        </div>
+                        <BbProgress Value="45" IndicatorClass="bg-amber-500" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span>Thin</span><span class="tabular-nums">60%</span>
+                        </div>
+                        <BbProgress Value="60" Class="h-1" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Skeleton</BbCardTitle>
+                    <BbCardDescription>Loading placeholders</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <BbSkeleton Shape="SkeletonShape.Circular" Width="48px" Height="48px" />
+                        <div class="space-y-2 flex-1">
+                            <BbSkeleton Height="16px" Class="w-3/4" />
+                            <BbSkeleton Height="14px" Class="w-1/2" />
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <BbSkeleton Height="14px" Class="w-full" />
+                        <BbSkeleton Height="14px" Class="w-5/6" />
+                        <BbSkeleton Height="14px" Class="w-4/6" />
+                    </div>
+                    <BbSkeleton Height="120px" Class="w-full" />
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Dialog, Sheet & Toast ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Overlays</BbCardTitle>
+                <BbCardDescription>Dialog, Sheet, Popover, Hover Card, Tooltip, and Toast</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="flex flex-wrap items-center gap-3">
+                    @* Dialog *@
+                    <BbDialog>
+                        <BbDialogTrigger>
+                            <BbButton Variant="ButtonVariant.Outline">
+                                <LucideIcon Name="panel-top" class="h-4 w-4 mr-2" />
+                                Open Dialog
+                            </BbButton>
+                        </BbDialogTrigger>
+                        <BbDialogContent>
+                            <BbDialogHeader>
+                                <BbDialogTitle>Edit Profile</BbDialogTitle>
+                                <BbDialogDescription>Make changes to your profile here.</BbDialogDescription>
+                            </BbDialogHeader>
+                            <div class="grid gap-4 py-4">
+                                <div class="space-y-2">
+                                    <BbLabel>Name</BbLabel>
+                                    <BbInput Value="John Doe" />
+                                </div>
+                                <div class="space-y-2">
+                                    <BbLabel>Email</BbLabel>
+                                    <BbInput Value="john@example.com" />
+                                </div>
+                            </div>
+                            <BbDialogFooter>
+                                <BbDialogClose><BbButton Variant="ButtonVariant.Outline">Cancel</BbButton></BbDialogClose>
+                                <BbDialogClose><BbButton>Save changes</BbButton></BbDialogClose>
+                            </BbDialogFooter>
+                        </BbDialogContent>
+                    </BbDialog>
+
+                    @* Confirm Dialog *@
+                    <BbButton Variant="ButtonVariant.Destructive" OnClick="ShowConfirmDialog">
+                        <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                        Confirm Dialog
+                    </BbButton>
+
+                    @* Sheet *@
+                    <BbSheet>
+                        <BbSheetTrigger>
+                            <BbButton Variant="ButtonVariant.Outline">
+                                <LucideIcon Name="panel-right" class="h-4 w-4 mr-2" />
+                                Open Sheet
+                            </BbButton>
+                        </BbSheetTrigger>
+                        <BbSheetContent>
+                            <BbSheetHeader>
+                                <BbSheetTitle>Notifications</BbSheetTitle>
+                                <BbSheetDescription>You have 3 unread notifications.</BbSheetDescription>
+                            </BbSheetHeader>
+                            <div class="py-4 space-y-3">
+                                @foreach (var n in new[] { ("New comment", "Alice commented on your PR", "2m ago"), ("Build passed", "CI pipeline completed", "15m ago"), ("New follower", "Bob started following you", "1h ago") })
+                                {
+                                    <div class="flex items-start gap-3 p-3 rounded-lg border">
+                                        <div class="h-2 w-2 rounded-full bg-primary mt-2 shrink-0"></div>
+                                        <div>
+                                            <p class="text-sm font-medium">@n.Item1</p>
+                                            <p class="text-xs text-muted-foreground">@n.Item2</p>
+                                            <p class="text-xs text-muted-foreground mt-1">@n.Item3</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <BbSheetFooter>
+                                <BbSheetClose><BbButton Class="w-full">Mark all as read</BbButton></BbSheetClose>
+                            </BbSheetFooter>
+                        </BbSheetContent>
+                    </BbSheet>
+
+                    @* Popover *@
+                    <BbPopover>
+                        <BbPopoverTrigger>
+                            <BbButton Variant="ButtonVariant.Outline">
+                                <LucideIcon Name="settings-2" class="h-4 w-4 mr-2" />
+                                Popover
+                            </BbButton>
+                        </BbPopoverTrigger>
+                        <BbPopoverContent Class="w-72">
+                            <div class="grid gap-4">
+                                <div>
+                                    <h4 class="font-medium leading-none">Dimensions</h4>
+                                    <p class="text-sm text-muted-foreground mt-1">Set the layer dimensions.</p>
+                                </div>
+                                <div class="grid gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <BbLabel Class="w-16">Width</BbLabel>
+                                        <BbInput Value="320px" Class="flex-1" />
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <BbLabel Class="w-16">Height</BbLabel>
+                                        <BbInput Value="240px" Class="flex-1" />
+                                    </div>
+                                </div>
+                            </div>
+                        </BbPopoverContent>
+                    </BbPopover>
+
+                    @* Hover Card *@
+                    <BbHoverCard>
+                        <BbHoverCardTrigger>
+                            <BbButton Variant="ButtonVariant.Link">Hover me</BbButton>
+                        </BbHoverCardTrigger>
+                        <BbHoverCardContent Class="w-72">
+                            <div class="flex gap-4">
+                                <BbAvatar Size="AvatarSize.Default">
+                                    <BbAvatarFallback>JD</BbAvatarFallback>
+                                </BbAvatar>
+                                <div>
+                                    <h4 class="text-sm font-semibold">John Doe</h4>
+                                    <p class="text-xs text-muted-foreground mt-1">Software engineer building great products. Open-source contributor.</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <LucideIcon Name="calendar" class="h-3 w-3 text-muted-foreground" />
+                                        <span class="text-xs text-muted-foreground">Joined Jan 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </BbHoverCardContent>
+                    </BbHoverCard>
+
+                    @* Tooltip *@
+                    <BbTooltip>
+                        <BbTooltipTrigger>
+                            <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Icon">
+                                <LucideIcon Name="info" class="h-4 w-4" />
+                            </BbButton>
+                        </BbTooltipTrigger>
+                        <BbTooltipContent>
+                            <p>This is a tooltip</p>
+                        </BbTooltipContent>
+                    </BbTooltip>
+
+                    @* Toast *@
+                    <BbButton Variant="ButtonVariant.Outline" OnClick="ShowToast">
+                        <LucideIcon Name="bell" class="h-4 w-4 mr-2" />
+                        Show Toast
+                    </BbButton>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Accordion & Collapsible ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Accordion</BbCardTitle>
+                    <BbCardDescription>Expandable content sections</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbAccordion Type="AccordionType.Single" Collapsible>
+                        <BbAccordionItem Value="item-1">
+                            <BbAccordionTrigger>Is it accessible?</BbAccordionTrigger>
+                            <BbAccordionContent>
+                                Yes. Built with proper ARIA attributes and keyboard navigation support.
+                            </BbAccordionContent>
+                        </BbAccordionItem>
+                        <BbAccordionItem Value="item-2">
+                            <BbAccordionTrigger>Is it styled?</BbAccordionTrigger>
+                            <BbAccordionContent>
+                                Yes. Follows the shadcn/ui design system with Tailwind CSS classes.
+                            </BbAccordionContent>
+                        </BbAccordionItem>
+                        <BbAccordionItem Value="item-3">
+                            <BbAccordionTrigger>Is it animated?</BbAccordionTrigger>
+                            <BbAccordionContent>
+                                Yes. Uses CSS grid transitions for smooth expand and collapse.
+                            </BbAccordionContent>
+                        </BbAccordionItem>
+                    </BbAccordion>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Collapsible</BbCardTitle>
+                    <BbCardDescription>Toggle visibility of content sections</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbCollapsible @bind-Open="_collapsibleOpen">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-semibold">3 repository tags</h4>
+                            <BbCollapsibleTrigger>
+                                <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Icon" Class="h-8 w-8">
+                                    <LucideIcon Name="chevrons-up-down" class="h-4 w-4" />
+                                </BbButton>
+                            </BbCollapsibleTrigger>
+                        </div>
+                        <div class="rounded-md border px-4 py-2.5 text-sm mt-2">
+                            v1.0.0 - Initial release
+                        </div>
+                        <BbCollapsibleContent Class="mt-2 space-y-2">
+                            <div class="rounded-md border px-4 py-2.5 text-sm">
+                                v1.1.0 - Bug fixes and improvements
+                            </div>
+                            <div class="rounded-md border px-4 py-2.5 text-sm">
+                                v2.0.0 - Major redesign
+                            </div>
+                        </BbCollapsibleContent>
+                    </BbCollapsible>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Tabs & Dropdown Menu ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Tabs</BbCardTitle>
+                    <BbCardDescription>Switchable content panels</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbTabs Value="@_activeTab" OnValueChange="@(v => _activeTab = v)">
+                        <BbTabsList Class="w-full">
+                            <BbTabsTrigger Value="account" Class="flex-1">Account</BbTabsTrigger>
+                            <BbTabsTrigger Value="password" Class="flex-1">Password</BbTabsTrigger>
+                            <BbTabsTrigger Value="notifications" Class="flex-1">Alerts</BbTabsTrigger>
+                        </BbTabsList>
+                        <BbTabsContent Value="account">
+                            <div class="space-y-3 pt-4">
+                                <div class="space-y-1.5">
+                                    <BbLabel>Name</BbLabel>
+                                    <BbInput Value="John Doe" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <BbLabel>Email</BbLabel>
+                                    <BbInput Value="john@example.com" />
+                                </div>
+                            </div>
+                        </BbTabsContent>
+                        <BbTabsContent Value="password">
+                            <div class="space-y-3 pt-4">
+                                <div class="space-y-1.5">
+                                    <BbLabel>Current password</BbLabel>
+                                    <BbInput Type="InputType.Password" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <BbLabel>New password</BbLabel>
+                                    <BbInput Type="InputType.Password" />
+                                </div>
+                            </div>
+                        </BbTabsContent>
+                        <BbTabsContent Value="notifications">
+                            <div class="space-y-3 pt-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium">Push notifications</p>
+                                        <p class="text-xs text-muted-foreground">Receive push alerts</p>
+                                    </div>
+                                    <BbSwitch Checked />
+                                </div>
+                                <BbSeparator />
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium">Email digest</p>
+                                        <p class="text-xs text-muted-foreground">Weekly summary email</p>
+                                    </div>
+                                    <BbSwitch />
+                                </div>
+                            </div>
+                        </BbTabsContent>
+                    </BbTabs>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Dropdown Menu & Context Menu</BbCardTitle>
+                    <BbCardDescription>Action menus with nested items</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <BbDropdownMenu>
+                            <BbDropdownMenuTrigger>
+                                <BbButton Variant="ButtonVariant.Outline">
+                                    <LucideIcon Name="menu" class="h-4 w-4 mr-2" />
+                                    Actions
+                                    <LucideIcon Name="chevron-down" class="h-3.5 w-3.5 ml-2" />
+                                </BbButton>
+                            </BbDropdownMenuTrigger>
+                            <BbDropdownMenuContent>
+                                <BbDropdownMenuLabel>My Account</BbDropdownMenuLabel>
+                                <BbDropdownMenuSeparator />
+                                <BbDropdownMenuItem>
+                                    <LucideIcon Name="user" class="h-4 w-4 mr-2" />
+                                    Profile
+                                </BbDropdownMenuItem>
+                                <BbDropdownMenuItem>
+                                    <LucideIcon Name="credit-card" class="h-4 w-4 mr-2" />
+                                    Billing
+                                </BbDropdownMenuItem>
+                                <BbDropdownMenuItem>
+                                    <LucideIcon Name="settings" class="h-4 w-4 mr-2" />
+                                    Settings
+                                </BbDropdownMenuItem>
+                                <BbDropdownMenuSeparator />
+                                <BbDropdownMenuItem Class="text-destructive">
+                                    <LucideIcon Name="log-out" class="h-4 w-4 mr-2" />
+                                    Log out
+                                </BbDropdownMenuItem>
+                            </BbDropdownMenuContent>
+                        </BbDropdownMenu>
+                    </div>
+                    <BbSeparator />
+                    <div class="rounded-lg border border-dashed p-8 text-center">
+                        <BbContextMenu>
+                            <BbContextMenuTrigger Class="w-full">
+                                <p class="text-sm text-muted-foreground">Right-click here for a context menu</p>
+                            </BbContextMenuTrigger>
+                            <BbContextMenuContent>
+                                <BbContextMenuItem>
+                                    <LucideIcon Name="copy" class="h-4 w-4 mr-2" />
+                                    Copy
+                                </BbContextMenuItem>
+                                <BbContextMenuItem>
+                                    <LucideIcon Name="clipboard-paste" class="h-4 w-4 mr-2" />
+                                    Paste
+                                </BbContextMenuItem>
+                                <BbContextMenuSeparator />
+                                <BbContextMenuItem>
+                                    <LucideIcon Name="rotate-ccw" class="h-4 w-4 mr-2" />
+                                    Undo
+                                </BbContextMenuItem>
+                            </BbContextMenuContent>
+                        </BbContextMenu>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Timeline ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Timeline</BbCardTitle>
+                <BbCardDescription>Chronological sequence of events</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbTimeline Size="TimelineSize.Small" Align="TimelineAlign.Left" ConnectorFit="TimelineConnectorFit.Connected">
+                    <BbTimelineItem Status="TimelineStatus.Completed" IconColor="TimelineColor.Primary">
+                        <IconContent><LucideIcon Name="check" class="h-3.5 w-3.5" /></IconContent>
+                        <ChildContent>
+                            <BbTimelineContent>
+                                <BbTimelineHeader>
+                                    <BbTimelineTitle>Project kickoff</BbTimelineTitle>
+                                    <BbTimelineTime>Jan 15</BbTimelineTime>
+                                </BbTimelineHeader>
+                                <BbTimelineDescription>Initial planning and requirements gathering.</BbTimelineDescription>
+                            </BbTimelineContent>
+                        </ChildContent>
+                    </BbTimelineItem>
+                    <BbTimelineItem Status="TimelineStatus.Completed" IconColor="TimelineColor.Primary">
+                        <IconContent><LucideIcon Name="code" class="h-3.5 w-3.5" /></IconContent>
+                        <ChildContent>
+                            <BbTimelineContent>
+                                <BbTimelineHeader>
+                                    <BbTimelineTitle>Development phase</BbTimelineTitle>
+                                    <BbTimelineTime>Feb 1</BbTimelineTime>
+                                </BbTimelineHeader>
+                                <BbTimelineDescription>Core features implemented and tested.</BbTimelineDescription>
+                            </BbTimelineContent>
+                        </ChildContent>
+                    </BbTimelineItem>
+                    <BbTimelineItem Status="TimelineStatus.InProgress" Loading IconColor="TimelineColor.Accent">
+                        <IconContent><LucideIcon Name="loader" class="h-3.5 w-3.5" /></IconContent>
+                        <ChildContent>
+                            <BbTimelineContent>
+                                <BbTimelineHeader>
+                                    <BbTimelineTitle>QA testing</BbTimelineTitle>
+                                    <BbTimelineTime>Mar 10</BbTimelineTime>
+                                </BbTimelineHeader>
+                                <BbTimelineDescription>Running integration and E2E test suites.</BbTimelineDescription>
+                            </BbTimelineContent>
+                        </ChildContent>
+                    </BbTimelineItem>
+                    <BbTimelineItem Status="TimelineStatus.Pending" ShowConnector="false">
+                        <IconContent><LucideIcon Name="rocket" class="h-3.5 w-3.5" /></IconContent>
+                        <ChildContent>
+                            <BbTimelineContent>
+                                <BbTimelineHeader>
+                                    <BbTimelineTitle>Production launch</BbTimelineTitle>
+                                    <BbTimelineTime>Apr 1</BbTimelineTime>
+                                </BbTimelineHeader>
+                                <BbTimelineDescription>Deploy to production and announce release.</BbTimelineDescription>
+                            </BbTimelineContent>
+                        </ChildContent>
+                    </BbTimelineItem>
+                </BbTimeline>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Charts ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Charts</BbCardTitle>
+                <BbCardDescription>Area, bar, line, and pie chart visualizations</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @* Area Chart *@
+                    <div>
+                        <p class="text-sm font-medium mb-3">Area Chart</p>
+                        <BbAreaChart Data="@_chartData" Config="@_chartConfig" Height="200px">
+                            <BbXAxis DataKey="month" />
+                            <BbYAxis />
+                            <BbChartTooltip />
+                            <BbChartLegend />
+                            <BbArea DataKey="desktop" Curve="CurveType.Smooth" Stacked="true">
+                                <BbFill>
+                                    <BbLinearGradient>
+                                        <BbGradientStop Offset="0" Color="var(--chart-1)" Opacity="0.4" />
+                                        <BbGradientStop Offset="1" Color="var(--chart-1)" Opacity="0.0" />
+                                    </BbLinearGradient>
+                                </BbFill>
+                            </BbArea>
+                            <BbArea DataKey="mobile" Curve="CurveType.Smooth" Stacked="true">
+                                <BbFill>
+                                    <BbLinearGradient>
+                                        <BbGradientStop Offset="0" Color="var(--chart-2)" Opacity="0.4" />
+                                        <BbGradientStop Offset="1" Color="var(--chart-2)" Opacity="0.0" />
+                                    </BbLinearGradient>
+                                </BbFill>
+                            </BbArea>
+                        </BbAreaChart>
+                    </div>
+
+                    @* Bar Chart *@
+                    <div>
+                        <p class="text-sm font-medium mb-3">Bar Chart</p>
+                        <BbBarChart Data="@_chartData" Config="@_chartConfig" Height="200px">
+                            <BbXAxis DataKey="month" />
+                            <BbYAxis />
+                            <BbChartTooltip />
+                            <BbChartLegend />
+                            <BbBar DataKey="desktop" BorderRadius="4" />
+                            <BbBar DataKey="mobile" BorderRadius="4" />
+                        </BbBarChart>
+                    </div>
+
+                    @* Line Chart *@
+                    <div>
+                        <p class="text-sm font-medium mb-3">Line Chart</p>
+                        <BbLineChart Data="@_chartData" Config="@_chartConfig" Height="200px">
+                            <BbXAxis DataKey="month" />
+                            <BbYAxis />
+                            <BbChartTooltip />
+                            <BbChartLegend />
+                            <BbLine DataKey="desktop" Curve="CurveType.Smooth" StrokeWidth="2" />
+                            <BbLine DataKey="mobile" Curve="CurveType.Smooth" StrokeWidth="2" />
+                        </BbLineChart>
+                    </div>
+
+                    @* Pie Chart *@
+                    <div>
+                        <p class="text-sm font-medium mb-3">Donut Chart</p>
+                        <BbPieChart Data="@_pieData" Config="@_pieConfig" Height="200px">
+                            <BbChartTooltip />
+                            <BbPie DataKey="value" NameKey="name" InnerRadius="50" OuterRadius="75">
+                                <BbCenterLabel Value="925" Title="Total" />
+                            </BbPie>
+                        </BbPieChart>
+                    </div>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Calendar ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Calendar</BbCardTitle>
+                    <BbCardDescription>Date picker calendar widget</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="flex justify-center">
+                    <BbCalendar @bind-Selected="_calendarDate" FirstDayOfWeek="DayOfWeek.Monday" />
+                </BbCardContent>
+                <BbCardFooter>
+                    <p class="text-sm text-muted-foreground">
+                        Selected: @(_calendarDate?.ToString("MMMM d, yyyy") ?? "None")
+                    </p>
+                </BbCardFooter>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Card Variants</BbCardTitle>
+                    <BbCardDescription>Composable card with header, content, and footer</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <BbCard>
+                        <BbCardHeader Class="pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                    <LucideIcon Name="package" class="h-5 w-5 text-primary" />
+                                </div>
+                                <div>
+                                    <BbCardTitle Class="text-sm">Nested Card</BbCardTitle>
+                                    <BbCardDescription>Cards can be nested and composed</BbCardDescription>
+                                </div>
+                            </div>
+                        </BbCardHeader>
+                        <BbCardContent Class="pb-3">
+                            <BbProgress Value="68" Class="h-1.5" />
+                        </BbCardContent>
+                        <BbCardFooter Class="text-xs text-muted-foreground">
+                            68% complete
+                        </BbCardFooter>
+                    </BbCard>
+                    <BbCard Class="border-destructive/40">
+                        <BbCardHeader Class="pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
+                                    <LucideIcon Name="triangle-alert" class="h-5 w-5 text-destructive" />
+                                </div>
+                                <div>
+                                    <BbCardTitle Class="text-sm text-destructive">Danger Card</BbCardTitle>
+                                    <BbCardDescription>Styled with destructive border</BbCardDescription>
+                                </div>
+                            </div>
+                        </BbCardHeader>
+                    </BbCard>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Typography ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Typography</BbCardTitle>
+                <BbCardDescription>Semantic text styles for headings, paragraphs, and more</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent Class="space-y-4">
+                <BbTypographyH3>This is a heading (H3)</BbTypographyH3>
+                <BbTypographyH4>This is a heading (H4)</BbTypographyH4>
+                <BbTypographyLead>This is lead text, used for introductions and summaries.</BbTypographyLead>
+                <BbTypographyP>This is a standard paragraph with <BbTypographyInlineCode>inline code</BbTypographyInlineCode> embedded in the text.</BbTypographyP>
+                <BbTypographyBlockquote>"Design is not just what it looks like. Design is how it works."</BbTypographyBlockquote>
+                <div class="flex items-center gap-4">
+                    <BbTypographyLarge>Large text</BbTypographyLarge>
+                    <BbTypographySmall>Small text</BbTypographySmall>
+                    <BbTypographyMuted>Muted text</BbTypographyMuted>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Breadcrumb & Kbd ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Breadcrumb</BbCardTitle>
+                    <BbCardDescription>Navigation hierarchy indicator</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <BbBreadcrumb>
+                        <BbBreadcrumbList AutoSeparator>
+                            <BbBreadcrumbItem><BbBreadcrumbLink Href="/">Home</BbBreadcrumbLink></BbBreadcrumbItem>
+                            <BbBreadcrumbItem><BbBreadcrumbLink Href="/projects">Projects</BbBreadcrumbLink></BbBreadcrumbItem>
+                            <BbBreadcrumbItem><BbBreadcrumbPage>Mobile App</BbBreadcrumbPage></BbBreadcrumbItem>
+                        </BbBreadcrumbList>
+                    </BbBreadcrumb>
+                    <BbSeparator />
+                    <BbBreadcrumb>
+                        <BbBreadcrumbList AutoSeparator>
+                            <BbBreadcrumbItem><BbBreadcrumbLink Href="/">Home</BbBreadcrumbLink></BbBreadcrumbItem>
+                            <BbBreadcrumbItem><BbBreadcrumbEllipsis /></BbBreadcrumbItem>
+                            <BbBreadcrumbItem><BbBreadcrumbLink Href="/settings">Settings</BbBreadcrumbLink></BbBreadcrumbItem>
+                            <BbBreadcrumbItem><BbBreadcrumbPage>Profile</BbBreadcrumbPage></BbBreadcrumbItem>
+                        </BbBreadcrumbList>
+                    </BbBreadcrumb>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Kbd</BbCardTitle>
+                    <BbCardDescription>Keyboard shortcut display</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <BbKbd Keys="Ctrl+C" />
+                        <BbKbd Keys="Ctrl+V" />
+                        <BbKbd Keys="Ctrl+Z" />
+                        <BbKbd Keys="Ctrl+S" />
+                        <BbKbd Keys="Shift+Enter" />
+                    </div>
+                    <BbSeparator />
+                    <div class="flex items-center gap-2">
+                        <BbKbd Keys="Esc" Size="KbdSize.Small" />
+                        <BbKbd Keys="Tab" />
+                        <BbKbd Keys="Enter" Size="KbdSize.Large" />
+                    </div>
+                    <BbSeparator />
+                    <p class="text-sm text-muted-foreground">
+                        Press <BbKbd Keys="Ctrl+K" /> to open the command palette.
+                    </p>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Button Group & Spinner ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Button Group</BbCardTitle>
+                    <BbCardDescription>Connected button sets</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <BbButtonGroup AriaLabel="View options">
+                        <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small"><LucideIcon Name="list" class="h-4 w-4" /></BbButton>
+                        <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small"><LucideIcon Name="layout-grid" class="h-4 w-4" /></BbButton>
+                        <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small"><LucideIcon Name="columns-3" class="h-4 w-4" /></BbButton>
+                    </BbButtonGroup>
+                    <BbButtonGroup AriaLabel="Actions">
+                        <BbButton Variant="ButtonVariant.Outline">Copy</BbButton>
+                        <BbButtonGroupSeparator />
+                        <BbButton Variant="ButtonVariant.Outline">Cut</BbButton>
+                        <BbButtonGroupSeparator />
+                        <BbButton Variant="ButtonVariant.Outline">Paste</BbButton>
+                    </BbButtonGroup>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Spinner & Empty</BbCardTitle>
+                    <BbCardDescription>Loading indicators and empty states</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="flex items-center gap-4">
+                        <BbSpinner Size="SpinnerSize.Small" />
+                        <BbSpinner />
+                        <BbSpinner Size="SpinnerSize.Large" Class="text-primary" />
+                        <BbButton Disabled>
+                            <BbSpinner Size="SpinnerSize.Small" Class="mr-2" /> Processing...
+                        </BbButton>
+                    </div>
+                    <BbSeparator />
+                    <BbEmpty Title="Nothing here" Description="No data available for this section." Size="EmptySize.Small">
+                        <Icon><LucideIcon Name="inbox" /></Icon>
+                    </BbEmpty>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Input OTP & Numeric Input ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Input OTP</BbCardTitle>
+                    <BbCardDescription>One-time password code entry</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div>
+                        <p class="text-xs text-muted-foreground mb-2">6-digit code</p>
+                        <BbInputOTP @bind-Value="_otpValue" Length="6" GroupSize="3" />
+                    </div>
+                    <div>
+                        <p class="text-xs text-muted-foreground mb-2">4-digit PIN (masked)</p>
+                        <BbInputOTP @bind-Value="_pinValue" Length="4" Mask ShowSeparator="false" Size="InputOTPSize.Large" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Numeric Input</BbCardTitle>
+                    <BbCardDescription>Number input with step buttons</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Quantity</BbLabel>
+                        <BbNumericInput TValue="int" @bind-Value="_quantity" Min="0" Max="100" ShowButtons Placeholder="Enter quantity" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Price ($)</BbLabel>
+                        <BbNumericInput TValue="decimal" @bind-Value="_price" Min="0m" Max="9999m" Step="0.01m" DecimalPlaces="2" AllowNegative="false" Placeholder="0.00" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Tag Input & Date Picker ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Tag Input</BbCardTitle>
+                    <BbCardDescription>Add and manage tags</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Skills</BbLabel>
+                        <BbTagInput @bind-Tags="_tags" Placeholder="Type and press Enter..." MaxTags="8" Clearable />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>With suggestions</BbLabel>
+                        <BbTagInput @bind-Tags="_tagsSuggested" Placeholder="Add framework..." Suggestions="@_frameworkSuggestions" Variant="TagInputVariant.Outline" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Date Picker</BbCardTitle>
+                    <BbCardDescription>Date selection with calendar popover</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Start date</BbLabel>
+                        <BbDatePicker @bind-Value="_startDate" Placeholder="Pick a date" DateFormat="MMM d, yyyy" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Future dates only</BbLabel>
+                        <BbDatePicker @bind-Value="_futureDate" Placeholder="Select deadline" MinDate="DateTime.Today" DateFormat="MMMM d, yyyy" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Radio Group & Checkbox Group ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Radio Group</BbCardTitle>
+                    <BbCardDescription>Single selection from options</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbRadioGroup @bind-Value="_selectedPlan">
+                        <BbRadioGroupItem Value="@("free")" Label="Free - $0/mo" />
+                        <BbRadioGroupItem Value="@("pro")" Label="Pro - $19/mo" />
+                        <BbRadioGroupItem Value="@("enterprise")" Label="Enterprise - $49/mo" />
+                        <BbRadioGroupItem Value="@("custom")" Label="Custom pricing" Disabled />
+                    </BbRadioGroup>
+                    <p class="text-xs text-muted-foreground mt-3">Selected: @(_selectedPlan ?? "none")</p>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Checkbox Group</BbCardTitle>
+                    <BbCardDescription>Multi-selection with select-all</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbCheckboxGroup TValue="string" @bind-Values="_selectedPerms" ShowSelectAll SelectAllLabel="All permissions">
+                        <BbCheckboxGroupItem Value="@("read")" Label="Read" />
+                        <BbCheckboxGroupItem Value="@("write")" Label="Write" />
+                        <BbCheckboxGroupItem Value="@("delete")" Label="Delete" />
+                        <BbCheckboxGroupItem Value="@("admin")" Label="Admin" />
+                    </BbCheckboxGroup>
+                    <p class="text-xs text-muted-foreground mt-3">Selected: @string.Join(", ", _selectedPerms)</p>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Rating & Pagination ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Rating</BbCardTitle>
+                    <BbCardDescription>Star, heart, and circle ratings</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <BbRating @bind-Value="_starRating" />
+                        <span class="text-sm text-muted-foreground tabular-nums">@_starRating / 5</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <BbRating @bind-Value="_heartRating" Icon="RatingIcon.Heart" AllowHalf ActiveColor="#ef4444" />
+                        <span class="text-sm text-muted-foreground tabular-nums">@_heartRating / 5</span>
+                    </div>
+                    <BbSeparator />
+                    <div class="flex items-center gap-3">
+                        <BbRating Value="4" ReadOnly Size="RatingSize.Small" />
+                        <span class="text-xs text-muted-foreground">Read-only (small)</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <BbRating Value="3.5" ReadOnly AllowHalf Size="RatingSize.Large" />
+                        <span class="text-sm text-muted-foreground">Half values (large)</span>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Pagination</BbCardTitle>
+                    <BbCardDescription>Page navigation controls</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <BbPagination TotalPages="10" @bind-CurrentPage="_currentPage" />
+                    <p class="text-xs text-muted-foreground text-center">Page @_currentPage of 10</p>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Drawer & Resizable ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Drawer</BbCardTitle>
+                    <BbCardDescription>Slide-in panel from any edge</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <BbDrawer Direction="DrawerDirection.Bottom">
+                            <BbDrawerTrigger>
+                                <BbButton Variant="ButtonVariant.Outline">
+                                    <LucideIcon Name="panel-bottom" class="h-4 w-4 mr-2" />
+                                    Bottom
+                                </BbButton>
+                            </BbDrawerTrigger>
+                            <BbDrawerContent>
+                                <BbDrawerHeader>
+                                    <BbDrawerTitle>Select Action</BbDrawerTitle>
+                                    <BbDrawerDescription>Choose an option from the list below.</BbDrawerDescription>
+                                </BbDrawerHeader>
+                                <div class="px-4">
+                                    <BbDrawerItem OnClick="() => {}">
+                                        <Icon><LucideIcon Name="pencil" class="h-4 w-4" /></Icon>
+                                        <ChildContent>Edit item</ChildContent>
+                                    </BbDrawerItem>
+                                    <BbDrawerItem OnClick="() => {}">
+                                        <Icon><LucideIcon Name="copy" class="h-4 w-4" /></Icon>
+                                        <ChildContent>Duplicate</ChildContent>
+                                    </BbDrawerItem>
+                                    <BbDrawerItem OnClick="() => {}">
+                                        <Icon><LucideIcon Name="share-2" class="h-4 w-4" /></Icon>
+                                        <ChildContent>Share</ChildContent>
+                                    </BbDrawerItem>
+                                </div>
+                                <BbDrawerFooter>
+                                    <BbDrawerClose><BbButton Variant="ButtonVariant.Outline" Class="w-full">Cancel</BbButton></BbDrawerClose>
+                                </BbDrawerFooter>
+                            </BbDrawerContent>
+                        </BbDrawer>
+
+                        <BbDrawer Direction="DrawerDirection.Right">
+                            <BbDrawerTrigger>
+                                <BbButton Variant="ButtonVariant.Outline">
+                                    <LucideIcon Name="panel-right" class="h-4 w-4 mr-2" />
+                                    Right
+                                </BbButton>
+                            </BbDrawerTrigger>
+                            <BbDrawerContent>
+                                <BbDrawerHeader>
+                                    <BbDrawerTitle>Details Panel</BbDrawerTitle>
+                                    <BbDrawerDescription>View item details here.</BbDrawerDescription>
+                                </BbDrawerHeader>
+                                <div class="p-4 space-y-3">
+                                    <div class="space-y-1.5">
+                                        <BbLabel>Name</BbLabel>
+                                        <BbInput Value="Example Item" />
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <BbLabel>Description</BbLabel>
+                                        <BbTextarea Value="A sample item for demonstration." />
+                                    </div>
+                                </div>
+                                <BbDrawerFooter>
+                                    <BbDrawerClose><BbButton Class="w-full">Save</BbButton></BbDrawerClose>
+                                </BbDrawerFooter>
+                            </BbDrawerContent>
+                        </BbDrawer>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Resizable</BbCardTitle>
+                    <BbCardDescription>Drag to resize adjacent panels</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbResizablePanelGroup Direction="ResizableDirection.Horizontal" Class="min-h-[150px] rounded-lg border">
+                        <BbResizablePanel DefaultSize="40" MinSize="20">
+                            <div class="flex h-full items-center justify-center p-4">
+                                <span class="text-sm font-medium text-muted-foreground">Panel A</span>
+                            </div>
+                        </BbResizablePanel>
+                        <BbResizableHandle />
+                        <BbResizablePanel DefaultSize="60" MinSize="20">
+                            <BbResizablePanelGroup Direction="ResizableDirection.Vertical">
+                                <BbResizablePanel DefaultSize="50">
+                                    <div class="flex h-full items-center justify-center p-4">
+                                        <span class="text-sm font-medium text-muted-foreground">Panel B</span>
+                                    </div>
+                                </BbResizablePanel>
+                                <BbResizableHandle />
+                                <BbResizablePanel DefaultSize="50">
+                                    <div class="flex h-full items-center justify-center p-4">
+                                        <span class="text-sm font-medium text-muted-foreground">Panel C</span>
+                                    </div>
+                                </BbResizablePanel>
+                            </BbResizablePanelGroup>
+                        </BbResizablePanel>
+                    </BbResizablePanelGroup>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Aspect Ratio ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Aspect Ratio</BbCardTitle>
+                <BbCardDescription>Maintain proportional containers</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <p class="text-xs text-muted-foreground mb-2">16:9</p>
+                        <BbAspectRatio Ratio="@(16.0 / 9.0)" Class="rounded-lg overflow-hidden bg-muted">
+                            <div class="flex items-center justify-center h-full">
+                                <LucideIcon Name="image" class="h-8 w-8 text-muted-foreground" />
+                            </div>
+                        </BbAspectRatio>
+                    </div>
+                    <div>
+                        <p class="text-xs text-muted-foreground mb-2">4:3</p>
+                        <BbAspectRatio Ratio="@(4.0 / 3.0)" Class="rounded-lg overflow-hidden bg-muted">
+                            <div class="flex items-center justify-center h-full">
+                                <LucideIcon Name="monitor" class="h-8 w-8 text-muted-foreground" />
+                            </div>
+                        </BbAspectRatio>
+                    </div>
+                    <div>
+                        <p class="text-xs text-muted-foreground mb-2">1:1</p>
+                        <BbAspectRatio Ratio="1" Class="rounded-lg overflow-hidden bg-muted">
+                            <div class="flex items-center justify-center h-full">
+                                <LucideIcon Name="square" class="h-8 w-8 text-muted-foreground" />
+                            </div>
+                        </BbAspectRatio>
+                    </div>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Combobox & Multi Select ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Combobox</BbCardTitle>
+                    <BbCardDescription>Searchable single-select dropdown</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-3">
+                    <BbLabel>Framework</BbLabel>
+                    <BbCombobox TValue="string" @bind-Value="_selectedFramework" Options="_frameworkOptions"
+                                Placeholder="Select framework..." SearchPlaceholder="Search..." EmptyMessage="No match found." />
+                    <p class="text-xs text-muted-foreground">Selected: @(_selectedFramework ?? "none")</p>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Multi Select</BbCardTitle>
+                    <BbCardDescription>Select multiple items with tags</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-3">
+                    <BbLabel>Colors</BbLabel>
+                    <BbMultiSelect TValue="string" @bind-Values="_selectedColors" Options="_colorOptions"
+                                   Placeholder="Pick colors..." ShowSelectAll SelectAllLabel="All colors" MaxDisplayTags="3" />
+                    <p class="text-xs text-muted-foreground">Selected: @string.Join(", ", _selectedColors ?? [])</p>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Color Picker & Range Slider ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Color Picker</BbCardTitle>
+                    <BbCardDescription>Pick colors with spectrum, inputs, and presets</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-3">
+                    <BbColorPicker @bind-Value="_colorValue" ShowAlpha ShowPresets ShowInputs />
+                    <div class="flex items-center gap-3">
+                        <div class="h-8 w-8 rounded-md border" style="background-color: @_colorValue"></div>
+                        <span class="text-sm font-mono text-muted-foreground">@_colorValue</span>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Range Slider</BbCardTitle>
+                    <BbCardDescription>Dual-thumb range selection</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-6 pt-2">
+                    <div class="space-y-3">
+                        <BbLabel>Price Range</BbLabel>
+                        <BbRangeSlider @bind-Value="_rangeSliderValue" Min="0" Max="100" Step="1" ShowTooltips />
+                        <p class="text-xs text-muted-foreground tabular-nums">
+                            $@(_rangeSliderValue.Start) - $@(_rangeSliderValue.End)
+                        </p>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Split Button & Input Group ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Split Button</BbCardTitle>
+                    <BbCardDescription>Primary action with dropdown alternatives</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <BbSplitButton OnClick="() => {}">
+                            <ChildContent>
+                                <LucideIcon Name="save" class="h-4 w-4 mr-2" />
+                                Save
+                            </ChildContent>
+                            <DropdownContent>
+                                <BbSplitButtonItem OnClick="() => {}">Save as Draft</BbSplitButtonItem>
+                                <BbSplitButtonItem OnClick="() => {}">Save and Close</BbSplitButtonItem>
+                                <BbSplitButtonSeparator />
+                                <BbSplitButtonItem OnClick="() => {}">Save as Template</BbSplitButtonItem>
+                            </DropdownContent>
+                        </BbSplitButton>
+
+                        <BbSplitButton Variant="ButtonVariant.Outline" OnClick="() => {}">
+                            <ChildContent>
+                                <LucideIcon Name="share-2" class="h-4 w-4 mr-2" />
+                                Share
+                            </ChildContent>
+                            <DropdownContent>
+                                <BbSplitButtonItem OnClick="() => {}">Copy Link</BbSplitButtonItem>
+                                <BbSplitButtonItem OnClick="() => {}">Email</BbSplitButtonItem>
+                                <BbSplitButtonItem OnClick="() => {}">Slack</BbSplitButtonItem>
+                            </DropdownContent>
+                        </BbSplitButton>
+
+                        <BbSplitButton Variant="ButtonVariant.Destructive" OnClick="() => {}">
+                            <ChildContent>
+                                <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                                Delete
+                            </ChildContent>
+                            <DropdownContent>
+                                <BbSplitButtonItem OnClick="() => {}">Move to Trash</BbSplitButtonItem>
+                                <BbSplitButtonItem OnClick="() => {}">Delete Permanently</BbSplitButtonItem>
+                            </DropdownContent>
+                        </BbSplitButton>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Input Group</BbCardTitle>
+                    <BbCardDescription>Compose inputs with addons and buttons</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <BbInputGroup>
+                        <BbInputGroupAddon Align="InputGroupAlign.InlineStart">
+                            <LucideIcon Name="search" class="h-4 w-4" />
+                        </BbInputGroupAddon>
+                        <BbInputGroupInput Placeholder="Search..." />
+                    </BbInputGroup>
+                    <BbInputGroup>
+                        <BbInputGroupText>https://</BbInputGroupText>
+                        <BbInputGroupInput Placeholder="example.com" />
+                        <BbInputGroupButton>
+                            <LucideIcon Name="arrow-right" class="h-4 w-4" />
+                        </BbInputGroupButton>
+                    </BbInputGroup>
+                    <BbInputGroup>
+                        <BbInputGroupAddon Align="InputGroupAlign.InlineStart">
+                            <LucideIcon Name="mail" class="h-4 w-4" />
+                        </BbInputGroupAddon>
+                        <BbInputGroupInput Placeholder="Email address" />
+                        <BbInputGroupButton>Subscribe</BbInputGroupButton>
+                    </BbInputGroup>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Masked Input & Currency Input ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Masked Input</BbCardTitle>
+                    <BbCardDescription>Inputs with format masks</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Phone</BbLabel>
+                        <BbMaskedInput @bind-Value="_phoneValue" Preset="MaskPreset.Phone" Placeholder="(___) ___-____" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Credit Card</BbLabel>
+                        <BbMaskedInput @bind-Value="_ssnValue" Preset="MaskPreset.CreditCard" Placeholder="____ ____ ____ ____" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Custom (IP Address)</BbLabel>
+                        <BbMaskedInput Mask="999.999.999.999" Placeholder="___.___.___.__" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Currency Input</BbCardTitle>
+                    <BbCardDescription>Formatted currency entry</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Amount (USD)</BbLabel>
+                        <BbCurrencyInput @bind-Value="_currencyValue" CurrencyCode="USD" ShowSymbol />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Amount (EUR)</BbLabel>
+                        <BbCurrencyInput Value="999.99m" CurrencyCode="EUR" ShowSymbol Disabled />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Time Picker & Date Range Picker ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Time Picker</BbCardTitle>
+                    <BbCardDescription>Time selection with hour/minute pickers</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Meeting time (12h)</BbLabel>
+                        <BbTimePicker @bind-Value="_timeValue" Format="TimeFormat.Hour12" Placeholder="Pick a time" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>24-hour format</BbLabel>
+                        <BbTimePicker Format="TimeFormat.Hour24" MinuteStep="15" Placeholder="Select time" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Date Range Picker</BbCardTitle>
+                    <BbCardDescription>Select a date range with presets</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Period</BbLabel>
+                        <BbDateRangePicker @bind-Value="_dateRangeValue" ShowTwoMonths ShowPresets
+                                           Placeholder="Pick a date range" DateFormat="MMM d, yyyy" />
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Native Select & Scroll Area ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Native Select</BbCardTitle>
+                    <BbCardDescription>Browser-native select dropdowns</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="space-y-2">
+                        <BbLabel>Size</BbLabel>
+                        <BbNativeSelect TValue="string" Placeholder="Choose a size">
+                            <option value="sm">Small</option>
+                            <option value="md">Medium</option>
+                            <option value="lg">Large</option>
+                            <option value="xl">Extra Large</option>
+                        </BbNativeSelect>
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel>Disabled</BbLabel>
+                        <BbNativeSelect TValue="string" Placeholder="Not available" Disabled>
+                            <option value="a">Option A</option>
+                        </BbNativeSelect>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Scroll Area</BbCardTitle>
+                    <BbCardDescription>Custom scrollable containers</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbScrollArea Height="180px" Type="ScrollAreaType.Always">
+                        <div class="space-y-3 pr-4">
+                            @for (int i = 1; i <= 20; i++)
+                            {
+                                var idx = i;
+                                <div class="flex items-center gap-3 py-2">
+                                    <BbAvatar Size="AvatarSize.Small">
+                                        <BbAvatarFallback>@($"U{idx}")</BbAvatarFallback>
+                                    </BbAvatar>
+                                    <div>
+                                        <p class="text-sm font-medium">User @idx</p>
+                                        <p class="text-xs text-muted-foreground">user@idx@@example.com</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </BbScrollArea>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Alert Dialog & Command ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Alert Dialog</BbCardTitle>
+                    <BbCardDescription>Modal confirmation that requires explicit action</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <BbAlertDialog>
+                            <BbAlertDialogTrigger>
+                                <BbButton Variant="ButtonVariant.Destructive">
+                                    <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                                    Delete Account
+                                </BbButton>
+                            </BbAlertDialogTrigger>
+                            <BbAlertDialogContent>
+                                <BbAlertDialogHeader>
+                                    <BbAlertDialogTitle>Are you absolutely sure?</BbAlertDialogTitle>
+                                    <BbAlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                                    </BbAlertDialogDescription>
+                                </BbAlertDialogHeader>
+                                <BbAlertDialogFooter>
+                                    <BbAlertDialogCancel><BbButton Variant="ButtonVariant.Outline">Cancel</BbButton></BbAlertDialogCancel>
+                                    <BbAlertDialogAction><BbButton Variant="ButtonVariant.Destructive">Yes, delete</BbButton></BbAlertDialogAction>
+                                </BbAlertDialogFooter>
+                            </BbAlertDialogContent>
+                        </BbAlertDialog>
+
+                        <BbAlertDialog>
+                            <BbAlertDialogTrigger>
+                                <BbButton Variant="ButtonVariant.Outline">
+                                    <LucideIcon Name="log-out" class="h-4 w-4 mr-2" />
+                                    Sign Out
+                                </BbButton>
+                            </BbAlertDialogTrigger>
+                            <BbAlertDialogContent>
+                                <BbAlertDialogHeader>
+                                    <BbAlertDialogTitle>Sign out?</BbAlertDialogTitle>
+                                    <BbAlertDialogDescription>
+                                        You will need to sign in again to access your workspace.
+                                    </BbAlertDialogDescription>
+                                </BbAlertDialogHeader>
+                                <BbAlertDialogFooter>
+                                    <BbAlertDialogCancel><BbButton Variant="ButtonVariant.Outline">Stay</BbButton></BbAlertDialogCancel>
+                                    <BbAlertDialogAction><BbButton>Sign Out</BbButton></BbAlertDialogAction>
+                                </BbAlertDialogFooter>
+                            </BbAlertDialogContent>
+                        </BbAlertDialog>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Command</BbCardTitle>
+                    <BbCardDescription>Searchable command palette</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbCommand Class="rounded-lg border">
+                        <BbCommandInput Placeholder="Type a command or search..." />
+                        <BbCommandList>
+                            <BbCommandEmpty>No results found.</BbCommandEmpty>
+                            <BbCommandGroup Heading="Suggestions">
+                                <BbCommandItem Value="calendar">
+                                    <Icon><LucideIcon Name="calendar" class="h-4 w-4" /></Icon>
+                                    <ChildContent>Calendar</ChildContent>
+                                </BbCommandItem>
+                                <BbCommandItem Value="search">
+                                    <Icon><LucideIcon Name="search" class="h-4 w-4" /></Icon>
+                                    <ChildContent>Search</ChildContent>
+                                </BbCommandItem>
+                                <BbCommandItem Value="calculator">
+                                    <Icon><LucideIcon Name="calculator" class="h-4 w-4" /></Icon>
+                                    <ChildContent>Calculator</ChildContent>
+                                </BbCommandItem>
+                            </BbCommandGroup>
+                            <BbCommandSeparator />
+                            <BbCommandGroup Heading="Settings">
+                                <BbCommandItem Value="profile">
+                                    <Icon><LucideIcon Name="user" class="h-4 w-4" /></Icon>
+                                    <ChildContent>Profile</ChildContent>
+                                </BbCommandItem>
+                                <BbCommandItem Value="billing">
+                                    <Icon><LucideIcon Name="credit-card" class="h-4 w-4" /></Icon>
+                                    <ChildContent>Billing</ChildContent>
+                                </BbCommandItem>
+                                <BbCommandItem Value="settings">
+                                    <Icon><LucideIcon Name="settings" class="h-4 w-4" /></Icon>
+                                    <ChildContent>Settings</ChildContent>
+                                </BbCommandItem>
+                            </BbCommandGroup>
+                        </BbCommandList>
+                    </BbCommand>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Carousel ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Carousel</BbCardTitle>
+                <BbCardDescription>Slide through content with navigation controls</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="mx-12">
+                    <BbCarousel>
+                        <BbCarouselContent>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                var idx = i;
+                                <BbCarouselItem>
+                                    <div class="p-1">
+                                        <BbCard>
+                                            <BbCardContent Class="flex aspect-square items-center justify-center p-6">
+                                                <div class="text-center">
+                                                    <span class="text-4xl font-semibold tabular-nums">@idx</span>
+                                                    <p class="text-sm text-muted-foreground mt-1">Slide @idx of 5</p>
+                                                </div>
+                                            </BbCardContent>
+                                        </BbCard>
+                                    </div>
+                                </BbCarouselItem>
+                            }
+                        </BbCarouselContent>
+                        <BbCarouselPrevious />
+                        <BbCarouselNext />
+                    </BbCarousel>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Menubar ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Menubar</BbCardTitle>
+                <BbCardDescription>Application-style menu bar with keyboard navigation</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbMenubar>
+                    <BbMenubarMenu>
+                        <BbMenubarTrigger>File</BbMenubarTrigger>
+                        <BbMenubarContent>
+                            <BbMenubarItem Shortcut="Ctrl+N">New File</BbMenubarItem>
+                            <BbMenubarItem Shortcut="Ctrl+O">Open</BbMenubarItem>
+                            <BbMenubarItem Shortcut="Ctrl+S">Save</BbMenubarItem>
+                            <BbMenubarSeparator />
+                            <BbMenubarItem Shortcut="Ctrl+P">Print</BbMenubarItem>
+                            <BbMenubarSeparator />
+                            <BbMenubarItem>Exit</BbMenubarItem>
+                        </BbMenubarContent>
+                    </BbMenubarMenu>
+                    <BbMenubarMenu>
+                        <BbMenubarTrigger>Edit</BbMenubarTrigger>
+                        <BbMenubarContent>
+                            <BbMenubarItem Shortcut="Ctrl+Z">Undo</BbMenubarItem>
+                            <BbMenubarItem Shortcut="Ctrl+Y">Redo</BbMenubarItem>
+                            <BbMenubarSeparator />
+                            <BbMenubarItem Shortcut="Ctrl+X">Cut</BbMenubarItem>
+                            <BbMenubarItem Shortcut="Ctrl+C">Copy</BbMenubarItem>
+                            <BbMenubarItem Shortcut="Ctrl+V">Paste</BbMenubarItem>
+                        </BbMenubarContent>
+                    </BbMenubarMenu>
+                    <BbMenubarMenu>
+                        <BbMenubarTrigger>View</BbMenubarTrigger>
+                        <BbMenubarContent>
+                            <BbMenubarCheckboxItem @bind-Checked="_menuWordWrap">Word Wrap</BbMenubarCheckboxItem>
+                            <BbMenubarCheckboxItem @bind-Checked="_menuMinimap">Minimap</BbMenubarCheckboxItem>
+                            <BbMenubarSeparator />
+                            <BbMenubarItem>Toggle Full Screen</BbMenubarItem>
+                        </BbMenubarContent>
+                    </BbMenubarMenu>
+                    <BbMenubarMenu>
+                        <BbMenubarTrigger>Help</BbMenubarTrigger>
+                        <BbMenubarContent>
+                            <BbMenubarItem>Documentation</BbMenubarItem>
+                            <BbMenubarItem Shortcut="Ctrl+Shift+I">Developer Tools</BbMenubarItem>
+                            <BbMenubarSeparator />
+                            <BbMenubarItem>About</BbMenubarItem>
+                        </BbMenubarContent>
+                    </BbMenubarMenu>
+                </BbMenubar>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Tree View ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Tree View</BbCardTitle>
+                <BbCardDescription>Hierarchical data display with expand/collapse</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="max-w-sm">
+                    <BbTreeView TItem="string" ShowIcons ShowLines SelectionMode="TreeSelectionMode.Single">
+                        <BbTreeItem Value="@("src")" Label="src" Icon="folder">
+                            <BbTreeItem Value="@("components")" Label="Components" Icon="folder">
+                                <BbTreeItem Value="@("app")" Label="App.razor" Icon="file-code" />
+                                <BbTreeItem Value="@("layout")" Label="MainLayout.razor" Icon="file-code" />
+                                <BbTreeItem Value="@("nav")" Label="NavMenu.razor" Icon="file-code" />
+                            </BbTreeItem>
+                            <BbTreeItem Value="@("pages")" Label="Pages" Icon="folder">
+                                <BbTreeItem Value="@("home")" Label="Home.razor" Icon="file-code" />
+                                <BbTreeItem Value="@("about")" Label="About.razor" Icon="file-code" />
+                                <BbTreeItem Value="@("contact")" Label="Contact.razor" Icon="file-code" />
+                            </BbTreeItem>
+                            <BbTreeItem Value="@("program")" Label="Program.cs" Icon="file" />
+                        </BbTreeItem>
+                        <BbTreeItem Value="@("wwwroot")" Label="wwwroot" Icon="folder">
+                            <BbTreeItem Value="@("css")" Label="css" Icon="folder">
+                                <BbTreeItem Value="@("appcss")" Label="app.css" Icon="file" />
+                            </BbTreeItem>
+                            <BbTreeItem Value="@("favicon")" Label="favicon.ico" Icon="file-image" />
+                        </BbTreeItem>
+                        <BbTreeItem Value="@("gitignore")" Label=".gitignore" Icon="file" />
+                        <BbTreeItem Value="@("readme")" Label="README.md" Icon="file-text" />
+                    </BbTreeView>
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── File Upload ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">File Upload</BbCardTitle>
+                <BbCardDescription>Drag-and-drop or click to upload files</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="max-w-lg">
+                    <BbFileUpload @bind-Files="_uploadedFiles" Multiple Accept="image/*,.pdf,.doc,.docx"
+                                  MaxFileSize="5242880" MaxFileCount="5" ShowPreview />
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Additional Charts: Radar, Radial Bar, Scatter ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Radar Chart</BbCardTitle>
+                    <BbCardDescription>Spider/web chart for multi-axis data</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbRadarChart Data="_radarData" IndicatorKey="skill" MaxValue="100" Height="250px"
+                                  Config="_radarConfig" Shape="RadarShape.Polygon">
+                        <BbChartTooltip />
+                        <BbRadar DataKey="score" FillOpacity="0.3" ShowDots />
+                    </BbRadarChart>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Radial Bar Chart</BbCardTitle>
+                    <BbCardDescription>Circular progress arcs</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbRadialBarChart Data="_radialData" Height="250px" Config="_radialConfig">
+                        <BbChartTooltip />
+                        <BbRadialBar DataKey="visitors" NameKey="browser" RoundCap ShowLabels>
+                            <BbCenterLabel Value="925" Title="Total" />
+                        </BbRadialBar>
+                    </BbRadialBarChart>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Scatter Chart</BbCardTitle>
+                    <BbCardDescription>Plot data points on X/Y axes</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbScatterChart Data="_scatterData" Height="250px" Config="_scatterConfig">
+                        <BbXAxis DataKey="weight" Type="AxisType.Value" Name="Weight (kg)" />
+                        <BbYAxis DataKey="height" Name="Height (cm)" />
+                        <BbChartTooltip />
+                        <BbScatter DataKey="height" SymbolSize="14" />
+                    </BbScatterChart>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Additional Charts: Funnel, Gauge, Candlestick ───────────────── *@
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Funnel Chart</BbCardTitle>
+                    <BbCardDescription>Conversion funnel visualization</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbFunnelChart Data="_funnelData" Height="250px" Config="_funnelConfig">
+                        <BbChartTooltip />
+                        <BbFunnel DataKey="value" NameKey="stage" Sort="FunnelSort.Descending" ShowLabels />
+                    </BbFunnelChart>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Gauge Chart</BbCardTitle>
+                    <BbCardDescription>Circular gauge meter</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbGaugeChart Data="_gaugeData" Height="250px">
+                        <BbGauge DataKey="value" Name="Performance" Min="0" Max="100"
+                                 ShowProgress ProgressWidth="12" Color="var(--chart-1)" />
+                    </BbGaugeChart>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Candlestick Chart</BbCardTitle>
+                    <BbCardDescription>Financial OHLC chart</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbCandlestickChart Data="_candlestickData" Height="250px">
+                        <BbXAxis DataKey="date" />
+                        <BbYAxis />
+                        <BbChartTooltip />
+                        <BbCandlestick OpenKey="open" CloseKey="close" HighKey="high" LowKey="low" />
+                    </BbCandlestickChart>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        @* ───────────────── Data Table ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Data Table</BbCardTitle>
+                <BbCardDescription>Sortable, filterable, paginated data grid</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbDataTable TData="ProductRow" Data="@_products"
+                             SelectionMode="DataTableSelectionMode.Multiple"
+                             InitialPageSize="5" ShowToolbar ShowPagination>
+                    <Columns>
+                        <BbDataTableColumn TData="ProductRow" TValue="string"
+                                           Property="@(p => p.Name)"
+                                           Header="Product" Sortable Filterable />
+                        <BbDataTableColumn TData="ProductRow" TValue="string"
+                                           Property="@(p => p.Category)"
+                                           Header="Category" Sortable Filterable>
+                            <CellTemplate Context="p">
+                                <BbBadge Variant="BadgeVariant.Outline">@p.Category</BbBadge>
+                            </CellTemplate>
+                        </BbDataTableColumn>
+                        <BbDataTableColumn TData="ProductRow" TValue="string"
+                                           Property="@(p => p.Price)"
+                                           Header="Price" Sortable
+                                           CellClass="text-sm tabular-nums" />
+                        <BbDataTableColumn TData="ProductRow" TValue="string"
+                                           Property="@(p => p.InStock ? "Yes" : "No")"
+                                           Header="In Stock" Sortable>
+                            <CellTemplate Context="p">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="h-2 w-2 rounded-full @(p.InStock ? "bg-green-500" : "bg-red-500")"></div>
+                                    <span class="text-sm">@(p.InStock ? "In Stock" : "Out")</span>
+                                </div>
+                            </CellTemplate>
+                        </BbDataTableColumn>
+                    </Columns>
+                </BbDataTable>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Navigation Menu ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Navigation Menu</BbCardTitle>
+                <BbCardDescription>Horizontal navigation with dropdown panels</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbNavigationMenu>
+                    <BbNavigationMenuList>
+                        <BbNavigationMenuItem Value="getting-started">
+                            <BbNavigationMenuTrigger>Getting Started</BbNavigationMenuTrigger>
+                            <BbNavigationMenuContent>
+                                <div class="grid gap-3 p-4 w-[400px] grid-cols-2">
+                                    <BbNavigationMenuLink Href="#">
+                                        <div class="text-sm font-medium">Introduction</div>
+                                        <p class="text-xs text-muted-foreground">Learn the basics of the framework</p>
+                                    </BbNavigationMenuLink>
+                                    <BbNavigationMenuLink Href="#">
+                                        <div class="text-sm font-medium">Installation</div>
+                                        <p class="text-xs text-muted-foreground">Step-by-step setup guide</p>
+                                    </BbNavigationMenuLink>
+                                    <BbNavigationMenuLink Href="#">
+                                        <div class="text-sm font-medium">Configuration</div>
+                                        <p class="text-xs text-muted-foreground">Customize settings and themes</p>
+                                    </BbNavigationMenuLink>
+                                    <BbNavigationMenuLink Href="#">
+                                        <div class="text-sm font-medium">Migration</div>
+                                        <p class="text-xs text-muted-foreground">Upgrade from older versions</p>
+                                    </BbNavigationMenuLink>
+                                </div>
+                            </BbNavigationMenuContent>
+                        </BbNavigationMenuItem>
+                        <BbNavigationMenuItem Value="components">
+                            <BbNavigationMenuTrigger>Components</BbNavigationMenuTrigger>
+                            <BbNavigationMenuContent>
+                                <div class="grid gap-3 p-4 w-[300px]">
+                                    <BbNavigationMenuLink Href="#">Buttons</BbNavigationMenuLink>
+                                    <BbNavigationMenuLink Href="#">Forms</BbNavigationMenuLink>
+                                    <BbNavigationMenuLink Href="#">Charts</BbNavigationMenuLink>
+                                    <BbNavigationMenuLink Href="#">Data Display</BbNavigationMenuLink>
+                                </div>
+                            </BbNavigationMenuContent>
+                        </BbNavigationMenuItem>
+                        <BbNavigationMenuItem>
+                            <BbNavigationMenuLink Href="#">Documentation</BbNavigationMenuLink>
+                        </BbNavigationMenuItem>
+                    </BbNavigationMenuList>
+                </BbNavigationMenu>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Form Fields ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Form Fields</BbCardTitle>
+                <BbCardDescription>Pre-composed label + input + helper/error text combos</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <BbFormFieldInput TValue="string" @bind-Value="_formName" Label="Full Name"
+                                      Placeholder="Enter your name" HelperText="As it appears on your ID" />
+                    <BbFormFieldInput TValue="string" @bind-Value="_formEmail" Label="Email"
+                                      Placeholder="you@example.com" Type="InputType.Email" Required />
+                    <BbFormFieldInput TValue="int" @bind-Value="_formAge" Label="Age"
+                                      HelperText="Must be 18 or older" />
+                </div>
+                <BbSeparator Class="my-4" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <BbFormFieldSelect TValue="string" @bind-Value="_formCountry" Label="Country"
+                                       Placeholder="Select country" Options="_countryOptions" />
+                    <BbFormFieldSwitch @bind-Checked="_formNewsletter" Label="Newsletter"
+                                       HelperText="Receive weekly updates" />
+                    <BbFormFieldInput TValue="string" @bind-Value="_formPassword" Label="Password"
+                                      Placeholder="Min 8 characters" Type="InputType.Password" />
+                </div>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Form Wizard ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Form Wizard</BbCardTitle>
+                <BbCardDescription>Multi-step guided form flow</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbFormWizard OnComplete="() => ShowToast()">
+                    <BbWizardStep Title="Account" Description="Basic info" Icon="user">
+                        <div class="space-y-3 py-4">
+                            <BbFormFieldInput TValue="string" @bind-Value="_wizardName" Label="Name" Placeholder="Your name" />
+                            <BbFormFieldInput TValue="string" @bind-Value="_wizardEmail" Label="Email" Placeholder="you@example.com" Type="InputType.Email" />
+                        </div>
+                    </BbWizardStep>
+                    <BbWizardStep Title="Preferences" Description="Customize" Icon="settings">
+                        <div class="space-y-3 py-4">
+                            <BbFormFieldSelect TValue="string" @bind-Value="_wizardTheme" Label="Theme" Options="_themeOptions" Placeholder="Pick a theme" />
+                            <BbFormFieldSwitch @bind-Checked="_wizardNotifications" Label="Email Notifications" HelperText="Get notified about updates" />
+                        </div>
+                    </BbWizardStep>
+                    <BbWizardStep Title="Review" Description="Confirm" Icon="circle-check">
+                        <div class="space-y-2 py-4">
+                            <div class="flex justify-between text-sm"><span class="text-muted-foreground">Name</span><span class="font-medium">@(_wizardName ?? "—")</span></div>
+                            <BbSeparator />
+                            <div class="flex justify-between text-sm"><span class="text-muted-foreground">Email</span><span class="font-medium">@(_wizardEmail ?? "—")</span></div>
+                            <BbSeparator />
+                            <div class="flex justify-between text-sm"><span class="text-muted-foreground">Theme</span><span class="font-medium">@(_wizardTheme ?? "—")</span></div>
+                            <BbSeparator />
+                            <div class="flex justify-between text-sm"><span class="text-muted-foreground">Notifications</span><span class="font-medium">@(_wizardNotifications ? "On" : "Off")</span></div>
+                        </div>
+                    </BbWizardStep>
+                </BbFormWizard>
+            </BbCardContent>
+        </BbCard>
+
+        @* ───────────────── Heatmap Chart ───────────────── *@
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Heatmap Chart</BbCardTitle>
+                <BbCardDescription>Grid-based intensity visualization</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbHeatmapChart Data="_heatmapData" Height="300px">
+                    <BbXAxis DataKey="day" />
+                    <BbYAxis DataKey="hour" />
+                    <BbVisualMap Min="0" Max="100" />
+                    <BbChartTooltip />
+                    <BbHeatmap XKey="dayIndex" YKey="hourIndex" ValueKey="value" ShowLabel />
+                </BbHeatmapChart>
+            </BbCardContent>
+        </BbCard>
+
+    </ChildContent>
+</PageWrapper>
+
+@code {
+    // Toggle state
+    private bool _boldPressed;
+    private bool _italicPressed;
+    private bool _underlinePressed;
+    private string? _alignment = "left";
+
+    // Input state
+    private string _inputText = "";
+    private string _textareaText = "";
+    private string? _selectedFruit;
+    private double _sliderVal = 35;
+    private bool _switchOn = true;
+    private bool _checkboxOn = true;
+
+    private readonly List<SelectOption<string>> _fruitOptions =
+    [
+        new("apple", "Apple"),
+        new("banana", "Banana"),
+        new("cherry", "Cherry"),
+        new("grape", "Grape"),
+        new("orange", "Orange"),
+    ];
+
+    // Collapsible
+    private bool _collapsibleOpen;
+
+    // Tabs
+    private string _activeTab = "account";
+
+    // Calendar
+    private DateTime? _calendarDate = DateTime.Today;
+
+    // Charts
+    private record ChartPoint(string Month, int Desktop, int Mobile);
+    private readonly List<ChartPoint> _chartData =
+    [
+        new("Jan", 186, 80), new("Feb", 305, 200), new("Mar", 237, 120),
+        new("Apr", 73, 190), new("May", 209, 130), new("Jun", 214, 140),
+    ];
+    private readonly ChartConfig _chartConfig = ChartConfig.Create(
+        ("desktop", new ChartSeriesConfig { Label = "Desktop", Color = "var(--chart-1)" }),
+        ("mobile", new ChartSeriesConfig { Label = "Mobile", Color = "var(--chart-2)" })
+    );
+
+    private record PiePoint(string Name, int Value, string Fill);
+    private readonly List<PiePoint> _pieData =
+    [
+        new("Chrome", 275, "var(--chart-1)"),
+        new("Safari", 200, "var(--chart-2)"),
+        new("Firefox", 187, "var(--chart-3)"),
+        new("Edge", 173, "var(--chart-4)"),
+        new("Other", 90, "var(--chart-5)"),
+    ];
+    private readonly ChartConfig _pieConfig = ChartConfig.Create(
+        ("chrome", new ChartSeriesConfig { Label = "Chrome", Color = "var(--chart-1)" }),
+        ("safari", new ChartSeriesConfig { Label = "Safari", Color = "var(--chart-2)" }),
+        ("firefox", new ChartSeriesConfig { Label = "Firefox", Color = "var(--chart-3)" }),
+        ("edge", new ChartSeriesConfig { Label = "Edge", Color = "var(--chart-4)" }),
+        ("other", new ChartSeriesConfig { Label = "Other", Color = "var(--chart-5)" })
+    );
+
+    // Input OTP
+    private string _otpValue = "";
+    private string _pinValue = "";
+
+    // Numeric Input
+    private int _quantity = 1;
+    private decimal _price = 0m;
+
+    // Tag Input
+    private IReadOnlyList<string>? _tags = new List<string> { "Blazor", "C#" };
+    private IReadOnlyList<string>? _tagsSuggested;
+    private readonly List<string> _frameworkSuggestions = ["React", "Angular", "Vue", "Svelte", "Blazor", "Next.js", "Nuxt", "Solid"];
+
+    // Date Picker
+    private DateTime? _startDate;
+    private DateTime? _futureDate;
+
+    // Radio Group
+    private string? _selectedPlan = "pro";
+
+    // Checkbox Group
+    private IReadOnlyCollection<string> _selectedPerms = new[] { "read", "write" };
+
+    // Rating
+    private double _starRating = 3;
+    private double _heartRating = 4.5;
+
+    // Pagination
+    private int _currentPage = 1;
+
+    // Range Slider
+    private (double Start, double End) _rangeSliderValue = (20, 80);
+
+    // Color Picker
+    private string _colorValue = "#6366f1";
+
+    // Menubar
+    private bool _menuWordWrap = true;
+    private bool _menuMinimap;
+
+    // File Upload
+    private IReadOnlyList<FileUploadItem>? _uploadedFiles;
+
+    // Combobox
+    private string? _selectedFramework;
+    private readonly List<SelectOption<string>> _frameworkOptions =
+    [
+        new("blazor", "Blazor"),
+        new("react", "React"),
+        new("angular", "Angular"),
+        new("vue", "Vue"),
+        new("svelte", "Svelte"),
+        new("nextjs", "Next.js"),
+    ];
+
+    // Multi Select
+    private IEnumerable<string>? _selectedColors = new[] { "red" };
+    private readonly List<SelectOption<string>> _colorOptions =
+    [
+        new("red", "Red"),
+        new("blue", "Blue"),
+        new("green", "Green"),
+        new("yellow", "Yellow"),
+        new("purple", "Purple"),
+        new("orange", "Orange"),
+    ];
+
+    // Time Picker
+    private TimeSpan? _timeValue = new TimeSpan(14, 30, 0);
+
+    // Date Range Picker
+    private DateRange? _dateRangeValue;
+
+    // Masked Input
+    private string _phoneValue = "";
+    private string _ssnValue = "";
+
+    // Currency Input
+    private decimal _currencyValue = 1250.00m;
+
+    // Radar Chart
+    private record RadarPoint(string Skill, int Score);
+    private readonly List<RadarPoint> _radarData =
+    [
+        new("Design", 80), new("Development", 95), new("Marketing", 60),
+        new("Analytics", 75), new("DevOps", 70), new("Testing", 85),
+    ];
+    private readonly ChartConfig _radarConfig = ChartConfig.Create(
+        ("score", new ChartSeriesConfig { Label = "Skills", Color = "var(--chart-1)" })
+    );
+
+    // Radial Bar Chart
+    private record RadialPoint(string Browser, int Visitors, string Fill);
+    private readonly List<RadialPoint> _radialData =
+    [
+        new("Chrome", 275, "var(--chart-1)"),
+        new("Safari", 200, "var(--chart-2)"),
+        new("Firefox", 187, "var(--chart-3)"),
+        new("Edge", 150, "var(--chart-4)"),
+        new("Other", 113, "var(--chart-5)"),
+    ];
+    private readonly ChartConfig _radialConfig = ChartConfig.Create(
+        ("chrome", new ChartSeriesConfig { Label = "Chrome", Color = "var(--chart-1)" }),
+        ("safari", new ChartSeriesConfig { Label = "Safari", Color = "var(--chart-2)" }),
+        ("firefox", new ChartSeriesConfig { Label = "Firefox", Color = "var(--chart-3)" }),
+        ("edge", new ChartSeriesConfig { Label = "Edge", Color = "var(--chart-4)" }),
+        ("other", new ChartSeriesConfig { Label = "Other", Color = "var(--chart-5)" })
+    );
+
+    // Scatter Chart
+    private record ScatterPoint(double Weight, double Height);
+    private readonly List<ScatterPoint> _scatterData =
+    [
+        new(65, 170), new(70, 175), new(80, 180), new(55, 160), new(90, 185),
+        new(75, 172), new(60, 165), new(85, 178), new(68, 168), new(72, 176),
+        new(58, 162), new(95, 190), new(62, 167), new(78, 174), new(82, 182),
+    ];
+    private readonly ChartConfig _scatterConfig = ChartConfig.Create(
+        ("height", new ChartSeriesConfig { Label = "Height", Color = "var(--chart-1)" })
+    );
+
+    // Funnel Chart
+    private record FunnelPoint(string Stage, int Value, string Fill);
+    private readonly List<FunnelPoint> _funnelData =
+    [
+        new("Visited", 5000, "var(--chart-1)"),
+        new("Signed Up", 2500, "var(--chart-2)"),
+        new("Trial", 1200, "var(--chart-3)"),
+        new("Subscribed", 600, "var(--chart-4)"),
+        new("Renewed", 350, "var(--chart-5)"),
+    ];
+    private readonly ChartConfig _funnelConfig = ChartConfig.Create(
+        ("visited", new ChartSeriesConfig { Label = "Visited", Color = "var(--chart-1)" }),
+        ("signedUp", new ChartSeriesConfig { Label = "Signed Up", Color = "var(--chart-2)" }),
+        ("trial", new ChartSeriesConfig { Label = "Trial", Color = "var(--chart-3)" }),
+        ("subscribed", new ChartSeriesConfig { Label = "Subscribed", Color = "var(--chart-4)" }),
+        ("renewed", new ChartSeriesConfig { Label = "Renewed", Color = "var(--chart-5)" })
+    );
+
+    // Gauge Chart
+    private record GaugePoint(double Value);
+    private readonly List<GaugePoint> _gaugeData = [new(72)];
+
+    // Candlestick Chart
+    private record CandlePoint(string Date, double Open, double Close, double High, double Low);
+    private readonly List<CandlePoint> _candlestickData =
+    [
+        new("Jan 2", 150.0, 155.5, 157.0, 149.0),
+        new("Jan 3", 155.5, 153.2, 156.8, 152.0),
+        new("Jan 4", 153.2, 158.4, 159.5, 152.8),
+        new("Jan 5", 158.4, 156.1, 160.0, 155.0),
+        new("Jan 6", 156.1, 161.3, 162.5, 155.5),
+        new("Jan 7", 161.3, 159.8, 163.0, 158.2),
+        new("Jan 8", 159.8, 164.2, 165.0, 159.0),
+        new("Jan 9", 164.2, 162.5, 166.0, 161.0),
+        new("Jan 10", 162.5, 167.0, 168.5, 161.5),
+        new("Jan 11", 167.0, 165.3, 169.0, 164.0),
+    ];
+
+    // Data Table - Products
+    private record ProductRow(string Name, string Category, string Price, bool InStock);
+    private readonly List<ProductRow> _products =
+    [
+        new("Wireless Keyboard", "Electronics", "$79.99", true),
+        new("Ergonomic Mouse", "Electronics", "$49.99", true),
+        new("USB-C Hub", "Accessories", "$34.99", false),
+        new("Monitor Stand", "Furniture", "$129.99", true),
+        new("Desk Lamp", "Lighting", "$45.00", true),
+        new("Webcam HD", "Electronics", "$89.99", false),
+        new("Cable Organizer", "Accessories", "$12.99", true),
+        new("Standing Desk Mat", "Furniture", "$39.99", true),
+    ];
+
+    // Form Fields
+    private string? _formName;
+    private string? _formEmail;
+    private int _formAge;
+    private string? _formCountry;
+    private bool _formNewsletter;
+    private string? _formPassword;
+    private readonly List<SelectOption<string>> _countryOptions =
+    [
+        new("us", "United States"),
+        new("uk", "United Kingdom"),
+        new("de", "Germany"),
+        new("fr", "France"),
+        new("nl", "Netherlands"),
+    ];
+
+    // Form Wizard
+    private string? _wizardName;
+    private string? _wizardEmail;
+    private string? _wizardTheme;
+    private bool _wizardNotifications = true;
+    private readonly List<SelectOption<string>> _themeOptions =
+    [
+        new("light", "Light"),
+        new("dark", "Dark"),
+        new("system", "System"),
+    ];
+
+    // Heatmap Chart
+    private record HeatmapPoint(string Day, string Hour, int DayIndex, int HourIndex, int Value);
+    private readonly List<HeatmapPoint> _heatmapData = GenerateHeatmapData();
+    private static List<HeatmapPoint> GenerateHeatmapData()
+    {
+        var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri" };
+        var hours = new[] { "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm" };
+        var rng = new Random(42);
+        var data = new List<HeatmapPoint>();
+        for (int d = 0; d < days.Length; d++)
+            for (int h = 0; h < hours.Length; h++)
+                data.Add(new(days[d], hours[h], d, h, rng.Next(10, 100)));
+        return data;
+    }
+
+    // Dialog
+    private async Task ShowConfirmDialog()
+    {
+        await DialogService.ConfirmAsync(
+            "Are you sure?",
+            "This action cannot be undone. This will permanently delete your data.",
+            new ConfirmDialogOptions { Destructive = true, ConfirmText = "Delete" });
+    }
+
+    // Toast
+    private void ShowToast()
+    {
+        ToastService.Show("Event created", "Your event has been scheduled successfully.", ToastVariant.Default);
+    }
+}

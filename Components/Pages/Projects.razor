@@ -1,0 +1,143 @@
+@page "/projects"
+
+<PageTitle>Projects</PageTitle>
+
+<PageWrapper Title="Projects" Description="Manage and track your active projects.">
+    <ActionButtons>
+        <BbButton>
+            <LucideIcon Name="plus" class="h-4 w-4 mr-2" />
+            New Project
+        </BbButton>
+    </ActionButtons>
+    <ChildContent>
+        <BbTabs Value="@_tab" OnValueChange="@(v => _tab = v)" Class="mb-6">
+            <BbTabsList>
+                <BbTabsTrigger Value="all">All (@_projects.Count)</BbTabsTrigger>
+                <BbTabsTrigger Value="active">Active (@_projects.Count(p => p.Status == "Active"))</BbTabsTrigger>
+                <BbTabsTrigger Value="completed">Completed (@_projects.Count(p => p.Status == "Completed"))</BbTabsTrigger>
+            </BbTabsList>
+        </BbTabs>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            @foreach (var p in FilteredProjects)
+            {
+                <BbCard Class="group transition-all hover:shadow-md">
+                    <BbCardHeader>
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-start gap-3 min-w-0">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 shrink-0 mt-0.5">
+                                    <LucideIcon Name="@p.Icon" class="h-4 w-4 text-primary" />
+                                </div>
+                                <div class="min-w-0">
+                                    <BbCardTitle Class="text-base truncate">@p.Name</BbCardTitle>
+                                    <BbCardDescription Class="mt-1 line-clamp-2">@p.Description</BbCardDescription>
+                                </div>
+                            </div>
+                            <BbBadge Variant="@(p.Status == "Active" ? BadgeVariant.Default : BadgeVariant.Secondary)">
+                                @p.Status
+                            </BbBadge>
+                        </div>
+                    </BbCardHeader>
+                    <BbCardContent>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs text-muted-foreground mb-1">
+                                    <span>Progress</span>
+                                    <span class="tabular-nums">@p.Progress%</span>
+                                </div>
+                                <BbProgress Value="@p.Progress" Class="h-1.5" />
+                            </div>
+                            <BbSeparator />
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <LucideIcon Name="calendar" class="h-3 w-3" />
+                                    @p.DueDate
+                                </div>
+                                <BbAvatarGroup>
+                                    @foreach (var initials in p.MemberInitials.Take(3))
+                                    {
+                                        <BbAvatar Class="h-6 w-6">
+                                            <BbAvatarFallback Class="text-[9px]">@initials</BbAvatarFallback>
+                                        </BbAvatar>
+                                    }
+                                    @if (p.Members > 3)
+                                    {
+                                        <BbAvatar Class="h-6 w-6">
+                                            <BbAvatarFallback Class="text-[9px] bg-muted text-muted-foreground">+@(p.Members - 3)</BbAvatarFallback>
+                                        </BbAvatar>
+                                    }
+                                </BbAvatarGroup>
+                            </div>
+                        </div>
+                    </BbCardContent>
+                </BbCard>
+            }
+        </div>
+
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Project Milestones</BbCardTitle>
+                <BbCardDescription>Key milestones across all active projects</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbTimeline Size="TimelineSize.Small" Align="TimelineAlign.Left" ConnectorFit="TimelineConnectorFit.Connected">
+                    @foreach (var (m, idx) in _milestones.Select((m, i) => (m, i)))
+                    {
+                        <BbTimelineItem Status="@m.Status"
+                                        IconColor="@(m.Status == TimelineStatus.Completed ? TimelineColor.Primary : m.Status == TimelineStatus.InProgress ? TimelineColor.Accent : TimelineColor.Muted)"
+                                        Loading="@(m.Status == TimelineStatus.InProgress)"
+                                        ShowConnector="@(idx < _milestones.Count - 1)">
+                            <IconContent>
+                                <LucideIcon Name="@m.Icon" class="h-3.5 w-3.5" />
+                            </IconContent>
+                            <ChildContent>
+                                <BbTimelineContent>
+                                    <BbTimelineHeader>
+                                        <BbTimelineTitle>@m.Title</BbTimelineTitle>
+                                        <BbTimelineTime>@m.Date</BbTimelineTime>
+                                    </BbTimelineHeader>
+                                    <BbTimelineDescription>@m.Project</BbTimelineDescription>
+                                </BbTimelineContent>
+                            </ChildContent>
+                        </BbTimelineItem>
+                    }
+                </BbTimeline>
+            </BbCardContent>
+        </BbCard>
+    </ChildContent>
+</PageWrapper>
+
+@code {
+    private string _tab = "all";
+
+    private record Project(string Name, string Description, string Status, int Progress, string DueDate, int Members, string Icon, string[] MemberInitials);
+
+    private readonly List<Project> _projects =
+    [
+        new("Mobile App Redesign", "Complete UI overhaul for the iOS and Android apps", "Active", 65, "Mar 28", 4, "smartphone", ["AC", "BS", "JD", "CW"]),
+        new("API v3 Migration", "Migrate all endpoints to the new v3 API spec", "Active", 40, "Apr 10", 3, "server", ["BS", "EM", "AC"]),
+        new("Design System", "Build a unified component library for all products", "Active", 82, "Mar 20", 6, "palette", ["CW", "JD", "AC", "BS", "EM", "DB"]),
+        new("Data Pipeline", "Automate ETL pipeline for analytics warehouse", "Completed", 100, "Mar 5", 2, "database", ["EM", "DB"]),
+        new("Auth Overhaul", "Replace legacy auth with OAuth 2.0 + PKCE", "Completed", 100, "Feb 28", 3, "shield", ["JD", "BS", "AC"]),
+        new("Onboarding Flow", "Redesign the new user onboarding experience", "Active", 18, "May 1", 5, "sparkles", ["CW", "AC", "JD", "BS", "EM"]),
+    ];
+
+    private IEnumerable<Project> FilteredProjects => _tab switch
+    {
+        "active" => _projects.Where(p => p.Status == "Active"),
+        "completed" => _projects.Where(p => p.Status == "Completed"),
+        _ => _projects
+    };
+
+    private record Milestone(string Title, string Project, string Date, string Icon, TimelineStatus Status);
+
+    private readonly List<Milestone> _milestones =
+    [
+        new("Auth integration complete", "Auth Overhaul", "Feb 28", "shield-check", TimelineStatus.Completed),
+        new("Data pipeline live", "Data Pipeline", "Mar 5", "database", TimelineStatus.Completed),
+        new("Component library v1", "Design System", "Mar 20", "palette", TimelineStatus.InProgress),
+        new("Mobile beta release", "Mobile App Redesign", "Mar 28", "smartphone", TimelineStatus.Pending),
+        new("API v3 cutover", "API v3 Migration", "Apr 10", "server", TimelineStatus.Pending),
+        new("Onboarding v2 launch", "Onboarding Flow", "May 1", "sparkles", TimelineStatus.Pending),
+    ];
+}

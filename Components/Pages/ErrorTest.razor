@@ -1,0 +1,78 @@
+@page "/error-test"
+
+<PageTitle>Error Test</PageTitle>
+
+<PageWrapper Title="Error Test" Description="Test error handling and exception boundaries.">
+    <BbCard>
+        <BbCardHeader>
+            <BbCardTitle Class="text-base">Throw Exceptions</BbCardTitle>
+            <BbCardDescription>Click a button to trigger different types of exceptions</BbCardDescription>
+        </BbCardHeader>
+        <BbCardContent Class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <BbButton Variant="ButtonVariant.Destructive" OnClick="ThrowInvalidOp">
+                    <LucideIcon Name="triangle-alert" class="h-4 w-4 mr-2" />
+                    InvalidOperationException
+                </BbButton>
+                <BbButton Variant="ButtonVariant.Destructive" OnClick="ThrowArgNull">
+                    <LucideIcon Name="circle-alert" class="h-4 w-4 mr-2" />
+                    ArgumentNullException
+                </BbButton>
+                <BbButton Variant="ButtonVariant.Destructive" OnClick="ThrowNotImpl">
+                    <LucideIcon Name="construction" class="h-4 w-4 mr-2" />
+                    NotImplementedException
+                </BbButton>
+                <BbButton Variant="ButtonVariant.Destructive" OnClick="ThrowDivideByZero">
+                    <LucideIcon Name="divide" class="h-4 w-4 mr-2" />
+                    DivideByZeroException
+                </BbButton>
+                <BbButton Variant="ButtonVariant.Destructive" OnClick="ThrowAsync" Class="sm:col-span-2">
+                    <LucideIcon Name="timer" class="h-4 w-4 mr-2" />
+                    Async Exception (after 500ms delay)
+                </BbButton>
+            </div>
+        </BbCardContent>
+    </BbCard>
+
+    <BbCard>
+        <BbCardHeader>
+            <BbCardTitle Class="text-base">How It Works</BbCardTitle>
+            <BbCardDescription>Understanding Blazor error handling</BbCardDescription>
+        </BbCardHeader>
+        <BbCardContent>
+            <div class="space-y-3 text-sm text-muted-foreground">
+                <p><strong>Unhandled exception</strong> — circuit stays alive, red error bar appears at the bottom. Click "Reload" to recover.</p>
+                <p><strong>Circuit disconnect</strong> — stop the server to test the ReconnectModal dialog with retry/resume.</p>
+            </div>
+        </BbCardContent>
+    </BbCard>
+</PageWrapper>
+
+@code {
+    private void ThrowInvalidOp()
+    {
+        throw new InvalidOperationException("This is a test InvalidOperationException thrown from the Error Test page.");
+    }
+
+    private void ThrowArgNull()
+    {
+        throw new ArgumentNullException("testParam", "This is a test ArgumentNullException thrown from the Error Test page.");
+    }
+
+    private void ThrowNotImpl()
+    {
+        throw new NotImplementedException("This feature is intentionally not implemented for testing purposes.");
+    }
+
+    private void ThrowDivideByZero()
+    {
+        var zero = 0;
+        _ = 42 / zero;
+    }
+
+    private async Task ThrowAsync()
+    {
+        await Task.Delay(500);
+        throw new TimeoutException("This is a test async TimeoutException thrown after a simulated delay.");
+    }
+}

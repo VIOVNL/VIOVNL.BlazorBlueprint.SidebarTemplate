@@ -1,0 +1,266 @@
+@page "/"
+
+<PageTitle>Dashboard</PageTitle>
+
+<PageWrapper Title="Dashboard" Description="Welcome back, John. Here's what's happening.">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <BbCard>
+            <BbCardHeader Class="pb-2">
+                <div class="flex items-center justify-between">
+                    <BbCardDescription>Total Revenue</BbCardDescription>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                        <LucideIcon Name="dollar-sign" class="h-4 w-4 text-primary" />
+                    </div>
+                </div>
+                <BbCardTitle Class="text-2xl tabular-nums">$45,231</BbCardTitle>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="flex items-center gap-1">
+                    <LucideIcon Name="trending-up" class="h-3.5 w-3.5 text-green-500" />
+                    <span class="text-xs text-green-500 font-medium">+20.1%</span>
+                    <span class="text-xs text-muted-foreground">from last month</span>
+                </div>
+            </BbCardContent>
+        </BbCard>
+        <BbCard>
+            <BbCardHeader Class="pb-2">
+                <div class="flex items-center justify-between">
+                    <BbCardDescription>Active Users</BbCardDescription>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10">
+                        <LucideIcon Name="users" class="h-4 w-4 text-blue-500" />
+                    </div>
+                </div>
+                <BbCardTitle Class="text-2xl tabular-nums">+2,350</BbCardTitle>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="flex items-center gap-1">
+                    <LucideIcon Name="trending-up" class="h-3.5 w-3.5 text-green-500" />
+                    <span class="text-xs text-green-500 font-medium">+180</span>
+                    <span class="text-xs text-muted-foreground">since last week</span>
+                </div>
+            </BbCardContent>
+        </BbCard>
+        <BbCard>
+            <BbCardHeader Class="pb-2">
+                <div class="flex items-center justify-between">
+                    <BbCardDescription>Conversion Rate</BbCardDescription>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
+                        <LucideIcon Name="percent" class="h-4 w-4 text-amber-500" />
+                    </div>
+                </div>
+                <BbCardTitle Class="text-2xl tabular-nums">3.24%</BbCardTitle>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="flex items-center gap-1">
+                    <LucideIcon Name="trending-down" class="h-3.5 w-3.5 text-red-500" />
+                    <span class="text-xs text-red-500 font-medium">-0.4%</span>
+                    <span class="text-xs text-muted-foreground">from last month</span>
+                </div>
+            </BbCardContent>
+        </BbCard>
+        <BbCard>
+            <BbCardHeader Class="pb-2">
+                <div class="flex items-center justify-between">
+                    <BbCardDescription>Uptime</BbCardDescription>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500/10">
+                        <LucideIcon Name="activity" class="h-4 w-4 text-green-500" />
+                    </div>
+                </div>
+                <BbCardTitle Class="text-2xl tabular-nums">99.9%</BbCardTitle>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="flex items-center gap-1">
+                    <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-xs text-green-500 font-medium">All systems operational</span>
+                </div>
+            </BbCardContent>
+        </BbCard>
+    </div>
+
+    <BbCard Class="mb-6">
+        <BbCardHeader>
+            <div class="flex items-center justify-between">
+                <div>
+                    <BbCardTitle Class="text-base">Revenue Overview</BbCardTitle>
+                    <BbCardDescription>Monthly revenue trend for the current year</BbCardDescription>
+                </div>
+                <div class="flex items-center gap-2">
+                    @foreach (var p in _periods)
+                    {
+                        <BbButton Variant="@(_selectedPeriod == p ? ButtonVariant.Default : ButtonVariant.Outline)"
+                                  Size="ButtonSize.Small"
+                                  OnClick="@(() => _selectedPeriod = p)">
+                            @p
+                        </BbButton>
+                    }
+                </div>
+            </div>
+        </BbCardHeader>
+        <BbCardContent>
+            <BbAreaChart Data="@_revenueData" Config="@_revenueConfig" Height="280px">
+                <BbXAxis DataKey="month" />
+                <BbYAxis />
+                <BbChartTooltip />
+                <BbChartLegend />
+                <BbArea DataKey="revenue" Curve="CurveType.Smooth">
+                    <BbFill>
+                        <BbLinearGradient>
+                            <BbGradientStop Offset="0" Color="var(--chart-1)" Opacity="0.5" />
+                            <BbGradientStop Offset="1" Color="var(--chart-1)" Opacity="0.0" />
+                        </BbLinearGradient>
+                    </BbFill>
+                </BbArea>
+                <BbArea DataKey="expenses" Curve="CurveType.Smooth">
+                    <BbFill>
+                        <BbLinearGradient>
+                            <BbGradientStop Offset="0" Color="var(--chart-2)" Opacity="0.3" />
+                            <BbGradientStop Offset="1" Color="var(--chart-2)" Opacity="0.0" />
+                        </BbLinearGradient>
+                    </BbFill>
+                </BbArea>
+            </BbAreaChart>
+        </BbCardContent>
+    </BbCard>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <BbCard Class="col-span-2">
+            <BbCardHeader>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <BbCardTitle Class="text-base">Recent Activity</BbCardTitle>
+                        <BbCardDescription>Latest events across your workspace</BbCardDescription>
+                    </div>
+                    <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Small">
+                        View all
+                        <LucideIcon Name="arrow-right" class="h-3.5 w-3.5 ml-1" />
+                    </BbButton>
+                </div>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbTimeline Size="TimelineSize.Small" Align="TimelineAlign.Left" ConnectorFit="TimelineConnectorFit.Connected">
+                    @foreach (var (item, idx) in _activity.Select((a, i) => (a, i)))
+                    {
+                        <BbTimelineItem Status="@(idx == 0 ? TimelineStatus.InProgress : TimelineStatus.Completed)"
+                                        IconColor="@item.Color"
+                                        ShowConnector="@(idx < _activity.Count - 1)">
+                            <IconContent>
+                                <LucideIcon Name="@item.Icon" class="h-3.5 w-3.5" />
+                            </IconContent>
+                            <ChildContent>
+                                <BbTimelineContent>
+                                    <BbTimelineHeader>
+                                        <BbTimelineTitle>@item.Title</BbTimelineTitle>
+                                        <BbTimelineTime>@item.Time</BbTimelineTime>
+                                    </BbTimelineHeader>
+                                    <BbTimelineDescription>@item.Description</BbTimelineDescription>
+                                </BbTimelineContent>
+                            </ChildContent>
+                        </BbTimelineItem>
+                    }
+                </BbTimeline>
+            </BbCardContent>
+        </BbCard>
+
+        <div class="space-y-4">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Quick Actions</BbCardTitle>
+                    <BbCardDescription>Common tasks</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="space-y-2">
+                        <BbButton Class="w-full justify-start gap-2" Variant="ButtonVariant.Outline">
+                            <LucideIcon Name="plus" class="h-4 w-4" />
+                            New Project
+                        </BbButton>
+                        <BbButton Class="w-full justify-start gap-2" Variant="ButtonVariant.Outline">
+                            <LucideIcon Name="user-plus" class="h-4 w-4" />
+                            Invite User
+                        </BbButton>
+                        <BbButton Class="w-full justify-start gap-2" Variant="ButtonVariant.Outline">
+                            <LucideIcon Name="file-text" class="h-4 w-4" />
+                            Generate Report
+                        </BbButton>
+                        <BbButton Class="w-full justify-start gap-2" Variant="ButtonVariant.Outline">
+                            <LucideIcon Name="settings" class="h-4 w-4" />
+                            Workspace Settings
+                        </BbButton>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Team Online</BbCardTitle>
+                    <BbCardDescription>Currently active members</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="space-y-3">
+                        @foreach (var member in _onlineMembers)
+                        {
+                            <div class="flex items-center gap-3">
+                                <BbAvatar Size="AvatarSize.Small" ShowDot DotClass="bg-green-500">
+                                    <BbAvatarFallback>@member.Initials</BbAvatarFallback>
+                                </BbAvatar>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium truncate">@member.Name</p>
+                                    <p class="text-xs text-muted-foreground truncate">@member.Status</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+    </div>
+</PageWrapper>
+
+@code {
+    private string _selectedPeriod = "6M";
+    private readonly string[] _periods = ["1M", "3M", "6M", "1Y"];
+
+    private record ActivityItem(string Icon, string Title, string Description, string Time, TimelineColor Color);
+
+    private readonly List<ActivityItem> _activity =
+    [
+        new("rocket", "Deployment completed", "v2.4.1 deployed to production successfully", "2m ago", TimelineColor.Primary),
+        new("user-plus", "New user registered", "alice@example.com joined the workspace", "14m ago", TimelineColor.Accent),
+        new("folder-plus", "Project created", "\"Mobile App Redesign\" was created by John", "1h ago", TimelineColor.Secondary),
+        new("shield-check", "Alert resolved", "High CPU usage on server-02 has been resolved", "2h ago", TimelineColor.Primary),
+        new("circle-check", "Task completed", "API integration milestone marked as done", "3h ago", TimelineColor.Primary),
+        new("git-merge", "Branch merged", "feature/auth-flow merged into main", "5h ago", TimelineColor.Secondary),
+    ];
+
+    private record TeamMember(string Name, string Initials, string Status);
+
+    private readonly List<TeamMember> _onlineMembers =
+    [
+        new("Alice Chen", "AC", "Working on API"),
+        new("Bob Smith", "BS", "In a meeting"),
+        new("Carol White", "CW", "Reviewing PRs"),
+        new("Eve Martinez", "EM", "Writing tests"),
+    ];
+
+    private record RevenuePoint(string Month, int Revenue, int Expenses);
+
+    private readonly List<RevenuePoint> _revenueData =
+    [
+        new("Jan", 18500, 12400),
+        new("Feb", 22300, 13800),
+        new("Mar", 28100, 15200),
+        new("Apr", 24800, 14100),
+        new("May", 31200, 16800),
+        new("Jun", 35600, 17500),
+        new("Jul", 32100, 16200),
+        new("Aug", 38400, 18900),
+        new("Sep", 41200, 19500),
+        new("Oct", 39800, 18700),
+        new("Nov", 43500, 20100),
+        new("Dec", 45200, 21300),
+    ];
+
+    private readonly ChartConfig _revenueConfig = ChartConfig.Create(
+        ("revenue", new ChartSeriesConfig { Label = "Revenue", Color = "var(--chart-1)" }),
+        ("expenses", new ChartSeriesConfig { Label = "Expenses", Color = "var(--chart-2)" })
+    );
+}

@@ -1,0 +1,177 @@
+@page "/users"
+
+<PageTitle>Users</PageTitle>
+
+<PageWrapper Title="Users" Description="Manage team members and their access.">
+    <ActionButtons>
+        <BbButton Variant="ButtonVariant.Outline">
+            <LucideIcon Name="download" class="h-4 w-4 mr-2" />
+            Export
+        </BbButton>
+        <BbButton>
+            <LucideIcon Name="user-plus" class="h-4 w-4 mr-2" />
+            Invite User
+        </BbButton>
+    </ActionButtons>
+    <ChildContent>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Total Users</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_users.Count</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <LucideIcon Name="users" class="h-5 w-5 text-primary" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Active Now</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_users.Count(u => u.Active)</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+                            <LucideIcon Name="circle-dot" class="h-5 w-5 text-green-500" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">Admins</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">@_users.Count(u => u.Role == "Admin")</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">
+                            <LucideIcon Name="shield" class="h-5 w-5 text-amber-500" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardContent Class="pt-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">New This Month</p>
+                            <p class="text-2xl font-bold tabular-nums mt-1">2</p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
+                            <LucideIcon Name="user-plus" class="h-5 w-5 text-blue-500" />
+                        </div>
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        <BbDataTable TData="UserRow" Data="@_users"
+                     SelectionMode="DataTableSelectionMode.Multiple"
+                     @bind-SelectedItems="_selectedUsers"
+                     InitialPageSize="10"
+                     ShowToolbar="true"
+                     ShowPagination="true">
+            <Columns>
+                <BbDataTableColumn TData="UserRow" TValue="string"
+                                   Property="@(u => u.Name)"
+                                   Header="User" Sortable="true" Filterable="true">
+                    <CellTemplate Context="user">
+                        <div class="flex items-center gap-3">
+                            <BbAvatar Class="h-9 w-9" ShowDot="@user.Active" DotClass="bg-green-500">
+                                <BbAvatarFallback Class="text-xs">@user.Initials</BbAvatarFallback>
+                            </BbAvatar>
+                            <div>
+                                <p class="text-sm font-medium">@user.Name</p>
+                                <p class="text-xs text-muted-foreground">@user.Email</p>
+                            </div>
+                        </div>
+                    </CellTemplate>
+                </BbDataTableColumn>
+
+                <BbDataTableColumn TData="UserRow" TValue="string"
+                                   Property="@(u => u.Role)"
+                                   Header="Role" Sortable="true" Filterable="true">
+                    <CellTemplate Context="user">
+                        <BbBadge Variant="@(user.Role == "Admin" ? BadgeVariant.Default : BadgeVariant.Outline)">
+                            @user.Role
+                        </BbBadge>
+                    </CellTemplate>
+                </BbDataTableColumn>
+
+                <BbDataTableColumn TData="UserRow" TValue="string"
+                                   Property="@(u => u.Active ? "Active" : "Inactive")"
+                                   Header="Status" Sortable="true">
+                    <CellTemplate Context="user">
+                        <div class="flex items-center gap-1.5">
+                            <div class="h-2 w-2 rounded-full @(user.Active ? "bg-green-500" : "bg-muted-foreground/40")"></div>
+                            <span class="text-sm">@(user.Active ? "Active" : "Inactive")</span>
+                        </div>
+                    </CellTemplate>
+                </BbDataTableColumn>
+
+                <BbDataTableColumn TData="UserRow" TValue="string"
+                                   Property="@(u => u.Joined)"
+                                   Header="Joined" Sortable="true"
+                                   CellClass="text-sm text-muted-foreground tabular-nums" />
+
+                <BbDataTableColumn TData="UserRow" TValue="string"
+                                   Property="@(u => "")"
+                                   Header="" Width="60px">
+                    <CellTemplate Context="user">
+                        <BbDropdownMenu>
+                            <BbDropdownMenuTrigger>
+                                <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Icon" Class="h-8 w-8">
+                                    <LucideIcon Name="ellipsis" class="h-4 w-4" />
+                                </BbButton>
+                            </BbDropdownMenuTrigger>
+                            <BbDropdownMenuContent Align="PopoverAlign.End">
+                                <BbDropdownMenuLabel>Actions</BbDropdownMenuLabel>
+                                <BbDropdownMenuSeparator />
+                                <BbDropdownMenuItem>
+                                    <LucideIcon Name="pencil" class="h-4 w-4 mr-2" />
+                                    Edit
+                                </BbDropdownMenuItem>
+                                <BbDropdownMenuItem>
+                                    <LucideIcon Name="shield" class="h-4 w-4 mr-2" />
+                                    Change Role
+                                </BbDropdownMenuItem>
+                                <BbDropdownMenuItem>
+                                    <LucideIcon Name="mail" class="h-4 w-4 mr-2" />
+                                    Send Email
+                                </BbDropdownMenuItem>
+                                <BbDropdownMenuSeparator />
+                                <BbDropdownMenuItem Class="text-destructive">
+                                    <LucideIcon Name="trash-2" class="h-4 w-4 mr-2" />
+                                    Remove
+                                </BbDropdownMenuItem>
+                            </BbDropdownMenuContent>
+                        </BbDropdownMenu>
+                    </CellTemplate>
+                </BbDataTableColumn>
+            </Columns>
+        </BbDataTable>
+    </ChildContent>
+</PageWrapper>
+
+@code {
+    private IReadOnlyCollection<UserRow> _selectedUsers = Array.Empty<UserRow>();
+
+    private record UserRow(string Name, string Email, string Role, bool Active, string Joined)
+    {
+        public string Initials => string.Concat(Name.Split(' ').Select(w => w[0]));
+    }
+
+    private readonly List<UserRow> _users =
+    [
+        new("John Doe", "john@example.com", "Admin", true, "Jan 12, 2025"),
+        new("Alice Chen", "alice@example.com", "Developer", true, "Feb 3, 2025"),
+        new("Bob Smith", "bob@example.com", "Developer", true, "Feb 14, 2025"),
+        new("Carol White", "carol@example.com", "Designer", true, "Mar 1, 2025"),
+        new("Dave Brown", "dave@example.com", "Viewer", false, "Mar 8, 2025"),
+        new("Eve Martinez", "eve@example.com", "Developer", true, "Mar 10, 2025"),
+    ];
+}

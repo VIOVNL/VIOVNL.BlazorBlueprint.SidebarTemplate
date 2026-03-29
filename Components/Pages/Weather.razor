@@ -1,0 +1,84 @@
+@page "/weather"
+
+<PageTitle>Weather</PageTitle>
+
+<PageWrapper Title="Weather" Description="Weather forecast data.">
+    @if (_forecasts == null)
+    {
+        <BbCard>
+            <BbCardContent Class="pt-6">
+                <div class="flex items-center gap-2 text-muted-foreground">
+                    <BbSpinner Size="SpinnerSize.Small" Class="mr-1" />
+                    <span>Loading forecast data...</span>
+                </div>
+            </BbCardContent>
+        </BbCard>
+    }
+    else
+    {
+        <BbDataTable TData="WeatherForecast" Data="@_forecasts"
+                     InitialPageSize="10"
+                     ShowToolbar="true"
+                     ShowPagination="true">
+            <Columns>
+                <BbDataTableColumn TData="WeatherForecast" TValue="string"
+                                   Property="@(f => f.Date.ToShortDateString())"
+                                   Header="Date" Sortable="true" />
+
+                <BbDataTableColumn TData="WeatherForecast" TValue="string"
+                                   Property="@(f => f.TemperatureC.ToString())"
+                                   Header="Temp. (C)" Sortable="true"
+                                   CellClass="tabular-nums" />
+
+                <BbDataTableColumn TData="WeatherForecast" TValue="string"
+                                   Property="@(f => f.TemperatureF.ToString())"
+                                   Header="Temp. (F)" Sortable="true"
+                                   CellClass="tabular-nums" />
+
+                <BbDataTableColumn TData="WeatherForecast" TValue="string"
+                                   Property="@(f => f.Summary ?? "")"
+                                   Header="Summary" Sortable="true" Filterable="true">
+                    <CellTemplate Context="forecast">
+                        <BbBadge Variant="@GetBadgeVariant(forecast.TemperatureC)">
+                            @forecast.Summary
+                        </BbBadge>
+                    </CellTemplate>
+                </BbDataTableColumn>
+            </Columns>
+        </BbDataTable>
+    }
+</PageWrapper>
+
+@code {
+    private List<WeatherForecast>? _forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+        _forecasts = Enumerable.Range(1, 10).Select(index => new WeatherForecast
+        {
+            Date = startDate.AddDays(index),
+            TemperatureC = Random.Shared.Next(-20, 55),
+            Summary = summaries[Random.Shared.Next(summaries.Length)]
+        }).ToList();
+    }
+
+    private static BadgeVariant GetBadgeVariant(int tempC) => tempC switch
+    {
+        < 0 => BadgeVariant.Destructive,
+        < 15 => BadgeVariant.Secondary,
+        < 30 => BadgeVariant.Outline,
+        _ => BadgeVariant.Default
+    };
+
+    private class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}

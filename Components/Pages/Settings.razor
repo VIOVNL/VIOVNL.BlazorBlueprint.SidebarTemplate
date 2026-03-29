@@ -1,0 +1,144 @@
+@page "/settings"
+@inject Services.ThemeService Theme
+@implements IDisposable
+
+<PageTitle>Settings</PageTitle>
+
+<PageWrapper Title="Settings" Description="Manage your workspace preferences.">
+
+    <BbCard>
+        <BbCardHeader>
+            <BbCardTitle Class="text-base">Appearance</BbCardTitle>
+            <BbCardDescription>Customize the look and feel of the app</BbCardDescription>
+        </BbCardHeader>
+        <BbCardContent Class="space-y-4">
+            <div class="space-y-2">
+                <BbLabel>Theme</BbLabel>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    @foreach (var theme in Services.ThemeService.Themes)
+                    {
+                        <BbButton Variant="ButtonVariant.Outline"
+                                  Class="@($"h-auto justify-start p-3 border-2 {(Theme.CurrentTheme == theme ? "border-primary bg-accent" : "")}")"
+                                  OnClick="@(() => _ = Theme.SetThemeAsync(theme))">
+                            <span class="text-sm font-medium">@theme.Name</span>
+                        </BbButton>
+                    }
+                </div>
+            </div>
+            <BbSeparator />
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium">Dark mode</p>
+                    <p class="text-xs text-muted-foreground">Toggle dark appearance</p>
+                </div>
+                <BbSwitch Checked="Theme.IsDark" CheckedChanged="OnDarkChanged" />
+            </div>
+            <BbSeparator />
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium">Load custom fonts</p>
+                    <p class="text-xs text-muted-foreground">Download theme fonts from Google Fonts</p>
+                </div>
+                <BbSwitch Checked="Theme.LoadFonts" CheckedChanged="OnLoadFontsChanged" />
+            </div>
+        </BbCardContent>
+    </BbCard>
+
+    <BbCard>
+        <BbCardHeader>
+            <BbCardTitle Class="text-base">General</BbCardTitle>
+            <BbCardDescription>Basic workspace settings</BbCardDescription>
+        </BbCardHeader>
+        <BbCardContent Class="space-y-4">
+            <div class="space-y-1.5">
+                <BbLabel>Workspace Name</BbLabel>
+                <BbInput @bind-Value="_workspaceName" />
+            </div>
+            <div class="space-y-1.5">
+                <BbLabel>Description</BbLabel>
+                <BbTextarea @bind-Value="_description" Placeholder="Describe your workspace..." />
+            </div>
+        </BbCardContent>
+        <BbCardFooter Class="gap-2">
+            <BbButton>Save Changes</BbButton>
+            <BbButton Variant="ButtonVariant.Outline">Cancel</BbButton>
+        </BbCardFooter>
+    </BbCard>
+
+    <BbCard>
+        <BbCardHeader>
+            <BbCardTitle Class="text-base">Notifications</BbCardTitle>
+            <BbCardDescription>Configure when and how you get notified</BbCardDescription>
+        </BbCardHeader>
+        <BbCardContent Class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium">Email notifications</p>
+                    <p class="text-xs text-muted-foreground">Receive updates via email</p>
+                </div>
+                <BbSwitch @bind-Checked="_emailNotifs" />
+            </div>
+            <BbSeparator />
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium">Desktop notifications</p>
+                    <p class="text-xs text-muted-foreground">Show browser notifications</p>
+                </div>
+                <BbSwitch @bind-Checked="_desktopNotifs" />
+            </div>
+            <BbSeparator />
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium">Weekly digest</p>
+                    <p class="text-xs text-muted-foreground">Summary email every Monday</p>
+                </div>
+                <BbSwitch @bind-Checked="_weeklyDigest" />
+            </div>
+        </BbCardContent>
+    </BbCard>
+
+    <BbCard Class="border-destructive/40">
+        <BbCardHeader>
+            <BbCardTitle Class="text-base text-destructive">Danger Zone</BbCardTitle>
+            <BbCardDescription>Irreversible actions — proceed with caution</BbCardDescription>
+        </BbCardHeader>
+        <BbCardContent Class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium">Delete all data</p>
+                    <p class="text-xs text-muted-foreground">Permanently remove all workspace data</p>
+                </div>
+                <BbButton Variant="ButtonVariant.Destructive" Size="ButtonSize.Small">Delete</BbButton>
+            </div>
+        </BbCardContent>
+    </BbCard>
+
+</PageWrapper>
+
+@code {
+    private string _workspaceName = "My Workspace";
+    private string _description = "";
+    private bool _emailNotifs = true;
+    private bool _desktopNotifs = false;
+    private bool _weeklyDigest = true;
+
+    protected override void OnInitialized()
+    {
+        Theme.OnChanged += StateHasChanged;
+    }
+
+    private async Task OnDarkChanged(bool value)
+    {
+        await Theme.ToggleDarkAsync();
+    }
+
+    private async Task OnLoadFontsChanged(bool value)
+    {
+        await Theme.SetLoadFontsAsync(value);
+    }
+
+    public void Dispose()
+    {
+        Theme.OnChanged -= StateHasChanged;
+    }
+}

@@ -1,0 +1,28 @@
+<div class="h-full overflow-y-auto pl-6 pr-4 mr-2 my-2 py-4 space-y-6">
+
+    <BbCard>
+        <BbCardHeader>
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <BbCardTitle>@Title</BbCardTitle>
+                    <BbCardDescription>@Description</BbCardDescription>
+                </div>
+                @if (ActionButtons != null)
+                {
+                    <div class="flex items-center gap-2 shrink-0">
+                        @ActionButtons
+                    </div>
+                }
+            </div>
+        </BbCardHeader>
+    </BbCard>
+    @ChildContent
+
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public string Description { get; set; } = "";
+    [Parameter] public RenderFragment? ActionButtons { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

@@ -1,0 +1,34 @@
+@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<PageWrapper Title="Counter" Description="Interactive counter demo with server-side rendering.">
+    <BbCard>
+        <BbCardContent Class="pt-6">
+            <div class="flex items-center gap-6">
+                <div class="text-4xl font-bold tabular-nums">@_count</div>
+                <div class="flex gap-2">
+                    <BbButton OnClick="Decrement" Variant="ButtonVariant.Outline" Size="ButtonSize.Icon">
+                        <LucideIcon Name="minus" class="h-4 w-4" />
+                    </BbButton>
+                    <BbButton OnClick="Increment">
+                        <LucideIcon Name="plus" class="h-4 w-4 mr-2" />
+                        Increment
+                    </BbButton>
+                    <BbButton OnClick="Reset" Variant="ButtonVariant.Ghost">
+                        <LucideIcon Name="rotate-ccw" class="h-4 w-4 mr-2" />
+                        Reset
+                    </BbButton>
+                </div>
+            </div>
+        </BbCardContent>
+    </BbCard>
+</PageWrapper>
+
+@code {
+    private int _count;
+
+    private void Increment() => _count++;
+    private void Decrement() => _count--;
+    private void Reset() => _count = 0;
+}

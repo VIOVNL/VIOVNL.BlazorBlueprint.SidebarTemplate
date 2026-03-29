@@ -1,0 +1,32 @@
+@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Error</PageTitle>
+
+<PageWrapper Title="Error" Description="An error occurred while processing your request.">
+    <BbCard>
+        <BbCardContent Class="pt-6 space-y-4">
+            @if (ShowRequestId)
+            {
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="font-medium">Request ID:</span>
+                    <BbTypographyInlineCode>@RequestId</BbTypographyInlineCode>
+                </div>
+            }
+            <p class="text-sm text-muted-foreground">
+                Swapping to the <strong>Development</strong> environment will display more detailed information about the error that occurred.
+            </p>
+        </BbCardContent>
+    </BbCard>
+</PageWrapper>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}

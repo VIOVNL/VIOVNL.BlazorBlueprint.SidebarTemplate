@@ -1,0 +1,162 @@
+@inherits LayoutComponentBase
+@inject Services.ThemeService Theme
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<BbSidebarProvider Variant="SidebarVariant.Inset" HeightClass="h-full">
+    <BbSidebar Collapsible="false">
+        <BbSidebarHeader>
+            <BbSidebarHeaderContent>
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
+                    <LucideIcon Name="zap" class="h-4 w-4" />
+                </div>
+                <BbSidebarHeaderInfo>
+                    <span class="truncate font-semibold">VIOVNL</span>
+                    <span class="truncate text-xs text-muted-foreground">BlazorBlueprint.SidebarTemplate</span>
+                </BbSidebarHeaderInfo>
+            </BbSidebarHeaderContent>
+        </BbSidebarHeader>
+
+        <BbSidebarContent>
+            <BbSidebarGroup>
+                <BbSidebarGroupLabel>Main</BbSidebarGroupLabel>
+                <BbSidebarGroupContent>
+                    <BbSidebarMenu>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/" Tooltip="Dashboard" Match="NavLinkMatch.All">
+                                <LucideIcon Name="house" class="h-4 w-4" />
+                                <span>Dashboard</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/analytics" Tooltip="Analytics" Match="NavLinkMatch.Prefix">
+                                <LucideIcon Name="chart-bar" class="h-4 w-4" />
+                                <span>Analytics</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/projects" Tooltip="Projects">
+                                <LucideIcon Name="folder-kanban" class="h-4 w-4" />
+                                <span>Projects</span>
+                                <BbSidebarMenuBadge>3</BbSidebarMenuBadge>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/users" Tooltip="Users">
+                                <LucideIcon Name="users" class="h-4 w-4" />
+                                <span>Users</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                    </BbSidebarMenu>
+                </BbSidebarGroupContent>
+            </BbSidebarGroup>
+
+            <BbSidebarSeparator />
+
+            <BbSidebarGroup>
+                <BbSidebarGroupLabel>Demo</BbSidebarGroupLabel>
+                <BbSidebarGroupContent>
+                    <BbSidebarMenu>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/components" Tooltip="Components" Match="NavLinkMatch.All">
+                                <LucideIcon Name="blocks" class="h-4 w-4" />
+                                <span>Components</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/counter" Tooltip="Counter" Match="NavLinkMatch.All">
+                                <LucideIcon Name="hash" class="h-4 w-4" />
+                                <span>Counter</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/weather" Tooltip="Weather" Match="NavLinkMatch.All">
+                                <LucideIcon Name="cloud-sun" class="h-4 w-4" />
+                                <span>Weather</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/error-test" Tooltip="Error Test" Match="NavLinkMatch.All">
+                                <LucideIcon Name="bug" class="h-4 w-4" />
+                                <span>Error Test</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton Href="/settings" Tooltip="Settings" Match="NavLinkMatch.All">
+                                <LucideIcon Name="settings" class="h-4 w-4" />
+                                <span>Settings</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                    </BbSidebarMenu>
+                </BbSidebarGroupContent>
+            </BbSidebarGroup>
+
+            <BbSidebarSeparator />
+
+            <BbSidebarGroup>
+                <BbSidebarGroupLabel>Links</BbSidebarGroupLabel>
+                <BbSidebarGroupContent>
+                    <BbSidebarMenu>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton OnClick="@(() => OpenInNewTab(DonateUrl))" Tooltip="Donate" Class="cursor-pointer">
+                                <LucideIcon Name="heart" class="h-4 w-4" />
+                                <span>Donate</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton OnClick="@(() => OpenInNewTab(CreditsUrl))" Tooltip="Credits" Class="cursor-pointer">
+                                <LucideIcon Name="globe" class="h-4 w-4" />
+                                <span>Credits</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                        <BbSidebarMenuItem>
+                            <BbSidebarMenuButton OnClick="@(() => OpenInNewTab(HireMeUrl))" Tooltip="Hire Me" Class="cursor-pointer">
+                                <LucideIcon Name="briefcase" class="h-4 w-4" />
+                                <span>Hire Me</span>
+                            </BbSidebarMenuButton>
+                        </BbSidebarMenuItem>
+                    </BbSidebarMenu>
+                </BbSidebarGroupContent>
+            </BbSidebarGroup>
+        </BbSidebarContent>
+
+        <BbSidebarFooter>
+            <BbSidebarMenu>
+                <BbSidebarMenuItem>
+                    <BbSidebarMenuButton Tooltip="John Doe">
+                        <BbAvatar Class="h-6 w-6">
+                            <BbAvatarFallback Class="text-[10px]">JD</BbAvatarFallback>
+                        </BbAvatar>
+                        <span>John Doe</span>
+                        <LucideIcon Name="chevrons-up-down" class="ml-auto h-4 w-4 text-muted-foreground" />
+                    </BbSidebarMenuButton>
+                </BbSidebarMenuItem>
+            </BbSidebarMenu>
+        </BbSidebarFooter>
+    </BbSidebar>
+
+    <BbSidebarInset Class="min-w-0 overflow-hidden">
+        @Body
+    </BbSidebarInset>
+</BbSidebarProvider>
+
+<BbPortalHost />
+<BbToastProvider Position="ToastPosition.BottomRight" />
+<BbDialogProvider />
+
+@code {
+    private const string DonateUrl = "https://github.com/sponsors/VIOVNL";
+    private const string CreditsUrl = "https://blazorblueprintui.com/";
+    private const string HireMeUrl = "https://viov.nl/#contact";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await Theme.InitializeAsync();
+    }
+
+    private async Task OpenInNewTab(string url) =>
+        await JS.InvokeVoidAsync("open", url, "_blank");
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+}

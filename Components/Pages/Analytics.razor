@@ -1,0 +1,239 @@
+@page "/analytics"
+
+<PageTitle>Analytics</PageTitle>
+
+<PageWrapper Title="Analytics" Description="Performance metrics and usage trends.">
+    <ActionButtons>
+        <div class="flex items-center gap-2">
+            @foreach (var p in _periods)
+            {
+                <BbButton Variant="@(_selected == p ? ButtonVariant.Default : ButtonVariant.Outline)"
+                          Size="ButtonSize.Small"
+                          OnClick="@(() => _selected = p)">
+                    @p
+                </BbButton>
+            }
+        </div>
+    </ActionButtons>
+    <ChildContent>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <BbCard>
+                <BbCardHeader Class="pb-2">
+                    <div class="flex items-center justify-between">
+                        <BbCardDescription>Page Views</BbCardDescription>
+                        <LucideIcon Name="eye" class="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <BbCardTitle Class="text-2xl tabular-nums">128,450</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex items-center gap-1">
+                        <LucideIcon Name="trending-up" class="h-3.5 w-3.5 text-green-500" />
+                        <span class="text-xs text-green-500 font-medium">+14.2%</span>
+                        <span class="text-xs text-muted-foreground">vs last period</span>
+                    </div>
+                    <BbProgress Value="72" Class="h-1 mt-2" />
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardHeader Class="pb-2">
+                    <div class="flex items-center justify-between">
+                        <BbCardDescription>Unique Visitors</BbCardDescription>
+                        <LucideIcon Name="users" class="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <BbCardTitle Class="text-2xl tabular-nums">42,380</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex items-center gap-1">
+                        <LucideIcon Name="trending-up" class="h-3.5 w-3.5 text-green-500" />
+                        <span class="text-xs text-green-500 font-medium">+8.1%</span>
+                        <span class="text-xs text-muted-foreground">vs last period</span>
+                    </div>
+                    <BbProgress Value="58" Class="h-1 mt-2" />
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardHeader Class="pb-2">
+                    <div class="flex items-center justify-between">
+                        <BbCardDescription>Avg. Session</BbCardDescription>
+                        <LucideIcon Name="clock" class="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <BbCardTitle Class="text-2xl tabular-nums">4m 32s</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex items-center gap-1">
+                        <LucideIcon Name="trending-up" class="h-3.5 w-3.5 text-green-500" />
+                        <span class="text-xs text-green-500 font-medium">+12s</span>
+                        <span class="text-xs text-muted-foreground">vs last period</span>
+                    </div>
+                    <BbProgress Value="65" Class="h-1 mt-2" />
+                </BbCardContent>
+            </BbCard>
+            <BbCard>
+                <BbCardHeader Class="pb-2">
+                    <div class="flex items-center justify-between">
+                        <BbCardDescription>Bounce Rate</BbCardDescription>
+                        <LucideIcon Name="log-out" class="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <BbCardTitle Class="text-2xl tabular-nums">24.3%</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="flex items-center gap-1">
+                        <LucideIcon Name="trending-down" class="h-3.5 w-3.5 text-green-500" />
+                        <span class="text-xs text-green-500 font-medium">-2.1%</span>
+                        <span class="text-xs text-muted-foreground">vs last period</span>
+                    </div>
+                    <BbProgress Value="24" Class="h-1 mt-2" />
+                </BbCardContent>
+            </BbCard>
+        </div>
+
+        <BbCard Class="mb-6">
+            <BbCardHeader>
+                <BbCardTitle Class="text-base">Traffic Overview</BbCardTitle>
+                <BbCardDescription>Page views and unique visitors over time</BbCardDescription>
+            </BbCardHeader>
+            <BbCardContent>
+                <BbAreaChart Data="@_trafficData" Config="@_trafficConfig" Height="300px">
+                    <BbXAxis DataKey="date" />
+                    <BbYAxis />
+                    <BbChartTooltip />
+                    <BbChartLegend />
+                    <BbArea DataKey="pageViews" Curve="CurveType.Smooth" Stacked="true">
+                        <BbFill>
+                            <BbLinearGradient>
+                                <BbGradientStop Offset="0" Color="var(--chart-1)" Opacity="0.4" />
+                                <BbGradientStop Offset="1" Color="var(--chart-1)" Opacity="0.0" />
+                            </BbLinearGradient>
+                        </BbFill>
+                    </BbArea>
+                    <BbArea DataKey="visitors" Curve="CurveType.Smooth" Stacked="true">
+                        <BbFill>
+                            <BbLinearGradient>
+                                <BbGradientStop Offset="0" Color="var(--chart-2)" Opacity="0.4" />
+                                <BbGradientStop Offset="1" Color="var(--chart-2)" Opacity="0.0" />
+                            </BbLinearGradient>
+                        </BbFill>
+                    </BbArea>
+                </BbAreaChart>
+            </BbCardContent>
+        </BbCard>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Device Breakdown</BbCardTitle>
+                    <BbCardDescription>Sessions by device type</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbBarChart Data="@_deviceData" Config="@_deviceConfig" Height="250px">
+                        <BbXAxis DataKey="device" />
+                        <BbYAxis />
+                        <BbChartTooltip />
+                        <BbBar DataKey="sessions" BorderRadius="6" />
+                    </BbBarChart>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Traffic Sources</BbCardTitle>
+                    <BbCardDescription>Where your users come from</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <BbPieChart Data="@_sourceData" Config="@_sourceConfig" Height="250px">
+                        <BbChartTooltip />
+                        <BbPie DataKey="value" NameKey="name" InnerRadius="55" OuterRadius="80">
+                            <BbCenterLabel Value="100%" Title="Total" />
+                        </BbPie>
+                    </BbPieChart>
+                </BbCardContent>
+            </BbCard>
+
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle Class="text-base">Top Pages</BbCardTitle>
+                    <BbCardDescription>Most visited routes</BbCardDescription>
+                </BbCardHeader>
+                <BbCardContent>
+                    <div class="space-y-4">
+                        @foreach (var pg in _topPages)
+                        {
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-mono text-xs truncate">@pg.Path</span>
+                                    <BbBadge Variant="BadgeVariant.Secondary" Class="text-xs tabular-nums shrink-0">@pg.Views.ToString("N0")</BbBadge>
+                                </div>
+                                <BbProgress Value="@((int)(pg.Views * 100 / 42000))" Class="h-1" />
+                            </div>
+                        }
+                    </div>
+                </BbCardContent>
+            </BbCard>
+        </div>
+    </ChildContent>
+</PageWrapper>
+
+@code {
+    private string _selected = "7d";
+    private readonly string[] _periods = ["24h", "7d", "30d", "90d"];
+
+    private record PageStat(string Path, int Views);
+
+    private readonly List<PageStat> _topPages =
+    [
+        new("/dashboard", 42000),
+        new("/analytics", 28500),
+        new("/projects", 19200),
+        new("/users", 11800),
+        new("/settings", 4300),
+    ];
+
+    private record TrafficPoint(string Date, int PageViews, int Visitors);
+
+    private readonly List<TrafficPoint> _trafficData =
+    [
+        new("Mon", 4200, 1800),
+        new("Tue", 3800, 1600),
+        new("Wed", 5100, 2200),
+        new("Thu", 4800, 2000),
+        new("Fri", 6200, 2800),
+        new("Sat", 3200, 1400),
+        new("Sun", 2900, 1200),
+    ];
+
+    private readonly ChartConfig _trafficConfig = ChartConfig.Create(
+        ("pageViews", new ChartSeriesConfig { Label = "Page Views", Color = "var(--chart-1)" }),
+        ("visitors", new ChartSeriesConfig { Label = "Visitors", Color = "var(--chart-2)" })
+    );
+
+    private record DevicePoint(string Device, int Sessions);
+
+    private readonly List<DevicePoint> _deviceData =
+    [
+        new("Desktop", 18420),
+        new("Mobile", 14280),
+        new("Tablet", 5840),
+        new("Other", 1320),
+    ];
+
+    private readonly ChartConfig _deviceConfig = ChartConfig.Create(
+        ("sessions", new ChartSeriesConfig { Label = "Sessions", Color = "var(--chart-1)" })
+    );
+
+    private record SourcePoint(string Name, int Value, string Fill);
+
+    private readonly List<SourcePoint> _sourceData =
+    [
+        new("Organic", 48, "var(--chart-1)"),
+        new("Direct", 27, "var(--chart-2)"),
+        new("Referral", 15, "var(--chart-3)"),
+        new("Email", 10, "var(--chart-4)"),
+    ];
+
+    private readonly ChartConfig _sourceConfig = ChartConfig.Create(
+        ("organic", new ChartSeriesConfig { Label = "Organic", Color = "var(--chart-1)" }),
+        ("direct", new ChartSeriesConfig { Label = "Direct", Color = "var(--chart-2)" }),
+        ("referral", new ChartSeriesConfig { Label = "Referral", Color = "var(--chart-3)" }),
+        ("email", new ChartSeriesConfig { Label = "Email", Color = "var(--chart-4)" })
+    );
+}
