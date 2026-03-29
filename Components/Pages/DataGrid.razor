@@ -1,4 +1,5 @@
 @page "/datagrid"
+@inject IJSRuntime JS
 
 <PageTitle>Data Grid</PageTitle>
 
@@ -405,7 +406,104 @@
             </BbCardContent>
         </BbCard>
 
-        @* ───── 7. Custom Styling Showcase ───── *@
+        @* ───── 7. State Persistence ───── *@
+        <BbCard>
+            <BbCardHeader>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <BbCardTitle>State Persistence</BbCardTitle>
+                        <BbCardDescription>
+                            Sort, resize, reorder columns, change page size, or apply filters — then save the state as a serializable JSON snapshot.
+                            Restore it later to bring back the exact same view.
+                        </BbCardDescription>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small" OnClick="SaveGridState"
+                                  Disabled="@(_persistState == null)">
+                            <LucideIcon Name="save" class="h-4 w-4 mr-2" />
+                            Save
+                        </BbButton>
+                        <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small" OnClick="RestoreGridState"
+                                  Disabled="@(_savedSnapshot == null)">
+                            <LucideIcon Name="upload" class="h-4 w-4 mr-2" />
+                            Restore
+                        </BbButton>
+                        <BbButton Variant="ButtonVariant.Outline" Size="ButtonSize.Small" OnClick="ResetGridState"
+                                  Disabled="@(_persistState == null)">
+                            <LucideIcon Name="rotate-ccw" class="h-4 w-4 mr-2" />
+                            Reset
+                        </BbButton>
+                    </div>
+                </div>
+            </BbCardHeader>
+            <BbCardContent Class="px-4 py-0">
+                <BbDataGrid TData="OrderRow" Items="_orders"
+                            @bind-State="_persistState"
+                            Resizable="true"
+                            Reorderable="true"
+                            ShowSearch="true"
+                            SearchPlaceholder="Search..."
+                            ShowFilterBar="true"
+                            InitialPageSize="5"
+                            ShowPagination="true">
+                    <Toolbar>
+                        <BbDataGridColumnVisibility TData="OrderRow" />
+                    </Toolbar>
+                    <Columns>
+                        <BbDataGridPropertyColumn Property="@(o => o.Id)" Title="#" Width="80px"
+                                                   Sortable="true" CellClass="tabular-nums font-mono text-xs" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Customer)" Sortable="true" Filterable="true" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Category)" Sortable="true" Filterable="true">
+                            <CellTemplate Context="order">
+                                <BbBadge Variant="BadgeVariant.Outline">@order.Category</BbBadge>
+                            </CellTemplate>
+                        </BbDataGridPropertyColumn>
+                        <BbDataGridPropertyColumn Property="@(o => o.Total)" Format="C2" Sortable="true" Filterable="true"
+                                                   CellClass="tabular-nums font-medium" />
+                        <BbDataGridPropertyColumn Property="@(o => o.Date)" Format="MMM d, yyyy" Sortable="true"
+                                                   CellClass="tabular-nums text-sm text-muted-foreground" />
+                    </Columns>
+                </BbDataGrid>
+            </BbCardContent>
+            @if (_snapshotJson != null)
+            {
+                <BbCardContent>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <LucideIcon Name="braces" class="h-4 w-4 text-muted-foreground" />
+                                <h4 class="text-sm font-medium">DataGridStateSnapshot (JSON)</h4>
+                            </div>
+                            <BbBadge Variant="BadgeVariant.Secondary" Class="text-xs">@_snapshotJson.Length bytes</BbBadge>
+                        </div>
+                        <div class="rounded-lg border bg-muted/30 overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-2 border-b bg-muted/50">
+                                <span class="text-xs font-mono text-muted-foreground">snapshot.json</span>
+                                <BbButton Variant="ButtonVariant.Ghost" Size="ButtonSize.Small" Class="h-7 text-xs"
+                                          OnClick="CopySnapshot">
+                                    <LucideIcon Name="@(_copied ? "check" : "clipboard")" class="h-3.5 w-3.5 mr-1.5" />
+                                    @(_copied ? "Copied" : "Copy")
+                                </BbButton>
+                            </div>
+                            <pre class="p-4 text-sm font-mono overflow-x-auto max-h-[400px] overflow-y-auto leading-relaxed"><code>@((MarkupString)_snapshotJsonHighlighted)</code></pre>
+                        </div>
+                        <div class="rounded-lg border border-dashed p-4 space-y-2 text-sm text-muted-foreground">
+                            <p class="font-medium text-foreground">How it works</p>
+                            <ul class="space-y-1 list-disc list-inside">
+                                <li><code class="text-xs bg-muted px-1 py-0.5 rounded">@@bind-State="_persistState"</code> — two-way binds the grid's internal state</li>
+                                <li><code class="text-xs bg-muted px-1 py-0.5 rounded">_persistState.Save()</code> — creates a serializable <code class="text-xs bg-muted px-1 py-0.5 rounded">DataGridStateSnapshot</code></li>
+                                <li>Serialize to JSON with <code class="text-xs bg-muted px-1 py-0.5 rounded">JsonSerializer.Serialize()</code> — store in localStorage, database, etc.</li>
+                                <li><code class="text-xs bg-muted px-1 py-0.5 rounded">_persistState.Restore(snapshot)</code> — restores sorting, columns, filters, page size</li>
+                                <li><code class="text-xs bg-muted px-1 py-0.5 rounded">_persistState.Reset()</code> — resets everything to defaults</li>
+                            </ul>
+                            <p class="text-xs mt-2">The snapshot includes: <strong>SortDefinitions</strong> (column sorts), <strong>ColumnStates</strong> (visibility, width, order), <strong>PageSize</strong>, and <strong>ColumnFilters</strong> (operator, value). Selection and expansion are transient and not persisted.</p>
+                        </div>
+                    </div>
+                </BbCardContent>
+            }
+        </BbCard>
+
+        @* ───── 8. Custom Styling Showcase ───── *@
         <BbCard>
             <BbCardHeader>
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -610,6 +708,136 @@
     private void OnMemberSelected(IReadOnlyCollection<TeamMember> selected)
     {
         _selectedMember = selected.FirstOrDefault();
+    }
+
+    // ───── State Persistence ─────
+    private BlazorBlueprint.Primitives.DataGrid.DataGridState<OrderRow>? _persistState;
+    private BlazorBlueprint.Primitives.DataGrid.DataGridStateSnapshot? _savedSnapshot;
+    private string? _snapshotJson;
+    private string? _snapshotJsonHighlighted;
+    private bool _copied;
+
+    private void SaveGridState()
+    {
+        if (_persistState == null) return;
+        _savedSnapshot = _persistState.Save();
+        var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+        _snapshotJson = System.Text.Json.JsonSerializer.Serialize(_savedSnapshot, options);
+        _snapshotJsonHighlighted = HighlightJson(_snapshotJson);
+        _copied = false;
+    }
+
+    private void RestoreGridState()
+    {
+        if (_persistState == null || _savedSnapshot == null) return;
+        _persistState.Restore(_savedSnapshot);
+    }
+
+    private void ResetGridState()
+    {
+        if (_persistState == null) return;
+        _persistState.Reset();
+        _snapshotJson = null;
+        _snapshotJsonHighlighted = null;
+        _savedSnapshot = null;
+    }
+
+    private async Task CopySnapshot()
+    {
+        if (_snapshotJson == null) return;
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", _snapshotJson);
+        _copied = true;
+        StateHasChanged();
+        await Task.Delay(2000);
+        _copied = false;
+        StateHasChanged();
+    }
+
+    private static string HighlightJson(string json)
+    {
+        var result = new System.Text.StringBuilder();
+        var inString = false;
+        var isKey = false;
+        var escaped = false;
+        var afterColon = false;
+
+        for (int i = 0; i < json.Length; i++)
+        {
+            var c = json[i];
+
+            if (escaped) { result.Append(System.Web.HttpUtility.HtmlEncode(c.ToString())); escaped = false; continue; }
+            if (c == '\\' && inString) { result.Append(c); escaped = true; continue; }
+
+            if (c == '"')
+            {
+                if (!inString)
+                {
+                    inString = true;
+                    isKey = !afterColon && (i == 0 || IsKeyPosition(json, i));
+                    result.Append(isKey
+                        ? "<span class=\"text-blue-400\">\""
+                        : "<span class=\"text-green-400\">\"");
+                }
+                else
+                {
+                    result.Append("\"</span>");
+                    inString = false;
+                    isKey = false;
+                }
+                continue;
+            }
+
+            if (!inString)
+            {
+                afterColon = c == ':' || (afterColon && c == ' ');
+
+                if (c == ':')
+                {
+                    result.Append("<span class=\"text-muted-foreground\">:</span>");
+                    afterColon = true;
+                    continue;
+                }
+                if (c == '{' || c == '}' || c == '[' || c == ']')
+                {
+                    result.Append($"<span class=\"text-yellow-400\">{c}</span>");
+                    afterColon = false;
+                    continue;
+                }
+                if (c == ',' ) { result.Append("<span class=\"text-muted-foreground\">,</span>"); afterColon = false; continue; }
+                if (char.IsDigit(c) || c == '-' || c == '.')
+                {
+                    result.Append($"<span class=\"text-amber-400\">{c}</span>");
+                    continue;
+                }
+                if (json.Length > i + 3 && json.Substring(i, 4) is "true" or "null")
+                {
+                    var word = json.Substring(i, 4);
+                    result.Append($"<span class=\"text-purple-400\">{word}</span>");
+                    i += 3;
+                    continue;
+                }
+                if (json.Length > i + 4 && json.Substring(i, 5) == "false")
+                {
+                    result.Append("<span class=\"text-purple-400\">false</span>");
+                    i += 4;
+                    continue;
+                }
+            }
+
+            result.Append(System.Web.HttpUtility.HtmlEncode(c.ToString()));
+        }
+
+        return result.ToString();
+    }
+
+    private static bool IsKeyPosition(string json, int i)
+    {
+        for (int j = i - 1; j >= 0; j--)
+        {
+            if (json[j] == ' ' || json[j] == '\n' || json[j] == '\r' || json[j] == '\t') continue;
+            return json[j] == '{' || json[j] == ',';
+        }
+        return true;
     }
 
     // ───── Styling Toggles ─────
